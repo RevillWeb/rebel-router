@@ -1,4 +1,4 @@
 {
-  "plugins": ["transform-es2015-modules-systemjs"],
+  "plugins": ["transform-es2015-modules-systemjs", "transform-es2015-function-name"],
   "presets": ["es2015"]
 }

@@ -8,7 +8,18 @@
 <script src="thirdparty/system.js"></script>
 <script>
     System.config({
-        "baseURL": "dist"
+        "baseURL": "dist",
+        "meta": {
+            'lib/*.js': {
+                format: 'register'
+            },
+            'sections/*.js': {
+                format: 'register'
+            },
+            'components/*.js': {
+                format: 'register'
+            }
+        }
     });
     System.import("index.js");
 </script>

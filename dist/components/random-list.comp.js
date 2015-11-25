@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-System.register(['../lib/rebel-router.js'], function (_export) {
-    var RebelTemplate, _createClass, Page2;
+System.register(["../lib/rebel-router.js"], function (_export) {
+    var RebelTemplate, _createClass, RandomList;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -16,7 +16,7 @@ System.register(['../lib/rebel-router.js'], function (_export) {
             throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
         }
 
-        return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+        return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
     }
 
     function _inherits(subClass, superClass) {
@@ -58,26 +58,34 @@ System.register(['../lib/rebel-router.js'], function (_export) {
                 };
             })();
 
-            _export('Page2', Page2 = (function (_RebelTemplate) {
-                _inherits(Page2, _RebelTemplate);
+            _export("RandomList", RandomList = (function (_RebelTemplate) {
+                _inherits(RandomList, _RebelTemplate);
 
-                function Page2() {
-                    _classCallCheck(this, Page2);
+                function RandomList() {
+                    _classCallCheck(this, RandomList);
 
-                    return _possibleConstructorReturn(this, Object.getPrototypeOf(Page2).apply(this, arguments));
+                    return _possibleConstructorReturn(this, Object.getPrototypeOf(RandomList).apply(this, arguments));
                 }
 
-                _createClass(Page2, [{
-                    key: 'createdCallback',
+                _createClass(RandomList, [{
+                    key: "createdCallback",
                     value: function createdCallback() {
-                        this.template = '<p>This is page two! Go to <a href="#/page1">Page One</a>.</p>';
+                        this.template = "<ul id=\"list\"></ul><button onclick=\"" + this.addItem() + "\">Add Item</button>";
+                    }
+                }, {
+                    key: "addItem",
+                    value: function addItem() {
+                        var $item = document.createElement("li");
+                        $item.innerHTML = "Item!";
                     }
                 }]);
 
-                return Page2;
+                return RandomList;
             })(RebelTemplate));
 
-            _export('Page2', Page2);
+            _export("RandomList", RandomList);
+
+            document.registerElement("random-list", RandomList);
         }
     };
 });

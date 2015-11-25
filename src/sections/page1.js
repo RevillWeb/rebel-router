@@ -1,11 +1,8 @@
-import {RebelView} from '../lib/rebel-router.js';
+import {RebelTemplate} from '../lib/rebel-router.js';
+import {RandomList} from '../components/random-list.comp.js';
 
-export class Page1 extends RebelView {
-    constructor() {
-        let template = `<p>This is page one.</p>`;
-        super("/page1", template);
-    }
-    attachedCallback() {
-        //Do some awesome on page load stuff
+export class Page1 extends RebelTemplate {
+    createdCallback() {
+        this.template = `<p>This is page one! Go to <a href="#/page2">Page Two</a>.</p> <random-list></random-list>`;
     }
 }
