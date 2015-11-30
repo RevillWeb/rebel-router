@@ -1,8 +1,14 @@
-import {RebelTemplate} from '../lib/rebel-router.js';
 import {RandomList} from '../components/random-list.comp.js';
 
-export class Page1 extends RebelTemplate {
+export class Page1 extends HTMLElement {
     createdCallback() {
-        this.template = `<p>This is page one! Go to <a href="#/page2">Page Two</a>.</p> <random-list></random-list>`;
+        this.createShadowRoot();
+        this.template = `<p>This is page one! Go to <a href="#/page2">Page Two</a>.</p>`;
+    }
+    attachedCallback() {
+        this.render();
+    }
+    render() {
+        this.shadowRoot.innerHTML = this.template;
     }
 }

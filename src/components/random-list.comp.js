@@ -1,6 +1,4 @@
-import {RebelTemplate} from '../lib/rebel-router.js';
-
-export class RandomList extends RebelTemplate {
+export class RandomList {
     createdCallback() {
         this.template = `<ul id="list"></ul><button onclick="${this.addItem()}">Add Item</button>`;
     }

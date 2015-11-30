@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-System.register(['../lib/rebel-router.js'], function (_export) {
-    var RebelTemplate, _createClass, Page2;
+System.register([], function (_export) {
+    var _createClass, Page2;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -16,7 +16,7 @@ System.register(['../lib/rebel-router.js'], function (_export) {
             throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
         }
 
-        return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+        return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
     }
 
     function _inherits(subClass, superClass) {
@@ -36,9 +36,7 @@ System.register(['../lib/rebel-router.js'], function (_export) {
     }
 
     return {
-        setters: [function (_libRebelRouterJs) {
-            RebelTemplate = _libRebelRouterJs.RebelTemplate;
-        }],
+        setters: [],
         execute: function () {
             _createClass = (function () {
                 function defineProperties(target, props) {
@@ -58,8 +56,8 @@ System.register(['../lib/rebel-router.js'], function (_export) {
                 };
             })();
 
-            _export('Page2', Page2 = (function (_RebelTemplate) {
-                _inherits(Page2, _RebelTemplate);
+            _export("Page2", Page2 = (function (_HTMLElement) {
+                _inherits(Page2, _HTMLElement);
 
                 function Page2() {
                     _classCallCheck(this, Page2);
@@ -68,16 +66,27 @@ System.register(['../lib/rebel-router.js'], function (_export) {
                 }
 
                 _createClass(Page2, [{
-                    key: 'createdCallback',
+                    key: "createdCallback",
                     value: function createdCallback() {
-                        this.template = '<p>This is page two! Go to <a href="#/page1">Page One</a>.</p>';
+                        this.createShadowRoot();
+                        this.template = "<p>This is page two! Go to <a href=\"#/page1\">Page One</a>.</p>";
+                    }
+                }, {
+                    key: "attachedCallback",
+                    value: function attachedCallback() {
+                        this.render();
+                    }
+                }, {
+                    key: "render",
+                    value: function render() {
+                        this.shadowRoot.innerHTML = this.template;
                     }
                 }]);
 
                 return Page2;
-            })(RebelTemplate));
+            })(HTMLElement));
 
-            _export('Page2', Page2);
+            _export("Page2", Page2);
         }
     };
 });

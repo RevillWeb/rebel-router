@@ -2,8 +2,8 @@
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-System.register([], function (_export) {
-    var _createClass, RebelRouter, RebelView, RebelTemplate;
+System.register(['../lib/rebel-core.js'], function (_export) {
+    var RebelCore, _createClass, RebelRouter, RebelView;
 
     function _possibleConstructorReturn(self, call) {
         if (!self) {
@@ -36,7 +36,9 @@ System.register([], function (_export) {
     }
 
     return {
-        setters: [],
+        setters: [function (_libRebelCoreJs) {
+            RebelCore = _libRebelCoreJs;
+        }],
         execute: function () {
             _createClass = (function () {
                 function defineProperties(target, props) {
@@ -61,6 +63,7 @@ System.register([], function (_export) {
                     _classCallCheck(this, RebelRouter);
 
                     this.paths = {};
+                    return this;
                 }
 
                 _createClass(RebelRouter, [{
@@ -72,12 +75,18 @@ System.register([], function (_export) {
                         return this;
                     }
                 }, {
-                    key: 'go',
-                    value: function go() {
-                        var $constructor = document.registerElement("rebel-view", RebelView);
-                        var $view = new $constructor();
-                        $view.paths = this.paths;
-                        return $view;
+                    key: 'create',
+                    value: function create(name) {
+                        name = name.toLowerCase();
+
+                        if (RebelCore.validElementTag(name) === true) {
+                            var $constructor = document.registerElement(name, RebelView);
+                            var $view = new $constructor();
+                            $view.paths = this.paths;
+                            return $view;
+                        } else {
+                            throw new Error("Invalid router name provided");
+                        }
                     }
                 }], [{
                     key: 'getPathFromUrl',
@@ -123,12 +132,35 @@ System.register([], function (_export) {
                         };
                     }
                 }, {
-                    key: 'render',
-                    value: function render() {
+                    key: 'currentTemplate',
+                    value: function currentTemplate() {
                         var path = RebelRouter.getPathFromUrl();
 
-                        if (this._paths[path] !== undefined) {
-                            this.shadowRoot.innerHTML = "<" + this._paths[path] + "></" + this._paths[path] + ">";
+                        for (var key in this._paths) {
+                            console.log(key);
+                            var regexString = key.replace(/{.*}\/?/, "[^\/]+/?") + "$";
+                            console.log(regexString);
+                            var regex = new RegExp(regexString);
+
+                            if (regex.test(path)) {
+                                return this._paths[key];
+                            }
+                        }
+
+                        return false;
+                    }
+                }, {
+                    key: 'render',
+                    value: function render() {
+                        this.shadowRoot.innerHTML = "";
+                        var templateName = this.currentTemplate();
+
+                        if (templateName !== false) {
+                            var $template = document.createElement(templateName);
+                            $template.setAttribute("rebel-url-params", JSON.stringify({
+                                "test": 123
+                            }));
+                            this.shadowRoot.appendChild($template);
                         }
                     }
                 }, {
@@ -140,32 +172,6 @@ System.register([], function (_export) {
 
                 return RebelView;
             })(HTMLElement);
-
-            _export('RebelTemplate', RebelTemplate = (function (_HTMLElement2) {
-                _inherits(RebelTemplate, _HTMLElement2);
-
-                function RebelTemplate() {
-                    _classCallCheck(this, RebelTemplate);
-
-                    return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelTemplate).apply(this, arguments));
-                }
-
-                _createClass(RebelTemplate, [{
-                    key: 'attachedCallback',
-                    value: function attachedCallback() {
-                        this.render();
-                    }
-                }, {
-                    key: 'render',
-                    value: function render() {
-                        this.createShadowRoot().innerHTML = this.template;
-                    }
-                }]);
-
-                return RebelTemplate;
-            })(HTMLElement));
-
-            _export('RebelTemplate', RebelTemplate);
         }
     };
 });

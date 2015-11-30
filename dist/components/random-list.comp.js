@@ -1,9 +1,7 @@
 "use strict";
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
-System.register(["../lib/rebel-router.js"], function (_export) {
-    var RebelTemplate, _createClass, RandomList;
+System.register([], function (_export) {
+    var _createClass, RandomList;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -11,34 +9,8 @@ System.register(["../lib/rebel-router.js"], function (_export) {
         }
     }
 
-    function _possibleConstructorReturn(self, call) {
-        if (!self) {
-            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-        }
-
-        return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-    }
-
-    function _inherits(subClass, superClass) {
-        if (typeof superClass !== "function" && superClass !== null) {
-            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-        }
-
-        subClass.prototype = Object.create(superClass && superClass.prototype, {
-            constructor: {
-                value: subClass,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-
     return {
-        setters: [function (_libRebelRouterJs) {
-            RebelTemplate = _libRebelRouterJs.RebelTemplate;
-        }],
+        setters: [],
         execute: function () {
             _createClass = (function () {
                 function defineProperties(target, props) {
@@ -58,13 +30,9 @@ System.register(["../lib/rebel-router.js"], function (_export) {
                 };
             })();
 
-            _export("RandomList", RandomList = (function (_RebelTemplate) {
-                _inherits(RandomList, _RebelTemplate);
-
+            _export("RandomList", RandomList = (function () {
                 function RandomList() {
                     _classCallCheck(this, RandomList);
-
-                    return _possibleConstructorReturn(this, Object.getPrototypeOf(RandomList).apply(this, arguments));
                 }
 
                 _createClass(RandomList, [{
@@ -81,7 +49,7 @@ System.register(["../lib/rebel-router.js"], function (_export) {
                 }]);
 
                 return RandomList;
-            })(RebelTemplate));
+            })());
 
             _export("RandomList", RandomList);
 

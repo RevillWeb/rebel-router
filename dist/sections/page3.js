@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
-System.register(['../components/random-list.comp.js'], function (_export) {
-    var RandomList, _createClass, Page1;
+System.register([], function (_export) {
+    var _createClass, Page3;
 
     function _classCallCheck(instance, Constructor) {
         if (!(instance instanceof Constructor)) {
@@ -16,7 +16,7 @@ System.register(['../components/random-list.comp.js'], function (_export) {
             throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
         }
 
-        return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+        return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
     }
 
     function _inherits(subClass, superClass) {
@@ -36,9 +36,7 @@ System.register(['../components/random-list.comp.js'], function (_export) {
     }
 
     return {
-        setters: [function (_componentsRandomListCompJs) {
-            RandomList = _componentsRandomListCompJs.RandomList;
-        }],
+        setters: [],
         execute: function () {
             _createClass = (function () {
                 function defineProperties(target, props) {
@@ -58,37 +56,48 @@ System.register(['../components/random-list.comp.js'], function (_export) {
                 };
             })();
 
-            _export('Page1', Page1 = (function (_HTMLElement) {
-                _inherits(Page1, _HTMLElement);
+            _export("Page3", Page3 = (function (_HTMLElement) {
+                _inherits(Page3, _HTMLElement);
 
-                function Page1() {
-                    _classCallCheck(this, Page1);
+                function Page3() {
+                    _classCallCheck(this, Page3);
 
-                    return _possibleConstructorReturn(this, Object.getPrototypeOf(Page1).apply(this, arguments));
+                    return _possibleConstructorReturn(this, Object.getPrototypeOf(Page3).apply(this, arguments));
                 }
 
-                _createClass(Page1, [{
-                    key: 'createdCallback',
+                _createClass(Page3, [{
+                    key: "createdCallback",
                     value: function createdCallback() {
                         this.createShadowRoot();
-                        this.template = '<p>This is page one! Go to <a href="#/page2">Page Two</a>.</p>';
+                        this.template = "<p>This is page three! Go to <a href=\"#/page1\">Page One</a>.</p>";
                     }
                 }, {
-                    key: 'attachedCallback',
+                    key: "attachedCallback",
                     value: function attachedCallback() {
                         this.render();
                     }
                 }, {
-                    key: 'render',
+                    key: "render",
                     value: function render() {
                         this.shadowRoot.innerHTML = this.template;
                     }
+                }, {
+                    key: "attributeChangedCallback",
+                    value: function attributeChangedCallback(name, value) {
+                        console.log("NAME: ", name);
+
+                        switch (name) {
+                            case "rebel-url-params":
+                                console.log("VALUE: ", value);
+                                break;
+                        }
+                    }
                 }]);
 
-                return Page1;
+                return Page3;
             })(HTMLElement));
 
-            _export('Page1', Page1);
+            _export("Page3", Page3);
         }
     };
 });
