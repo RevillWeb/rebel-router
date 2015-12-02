@@ -13,7 +13,7 @@ System.register(['lib/rebel-router.js', 'sections/page1.js', 'sections/page2.js'
                                                             Page3 = _sectionsPage3Js.Page3;
                                         }],
                                         execute: function () {
-                                                            $mainView = new RebelRouter().add("/page1", Page1).add("/page2", Page2).add("/page3/{id}", Page3).create("main-view");
+                                                            $mainView = new RebelRouter().add(["/page1/id/{id}/name/{name}", "/page1"], Page1).add("/page2", Page2).add("/page3/{id}", Page3).create("main-view");
                                                             document.body.appendChild($mainView);
                                         }
                     };
