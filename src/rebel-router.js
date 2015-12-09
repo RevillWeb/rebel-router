@@ -1,4 +1,4 @@
-import * as RebelCore from '../lib/rebel-core.js';
+import * as RebelCore from 'rebel-core.js';
 
 export class RebelRouter {
     constructor() {
@@ -62,7 +62,7 @@ class RebelView extends HTMLElement {
             }
         };
     }
-    currentTemplate() {
+    current() {
         const path = RebelRouter.getPathFromUrl();
         for (const route in this._paths) {
             let regexString = "^" + route.replace(/{\w+}\/?/g, "(\\w+)\/?");
@@ -81,7 +81,7 @@ class RebelView extends HTMLElement {
     }
     render() {
         this.shadowRoot.innerHTML = "";
-        const result = this.currentTemplate();
+        const result = this.current();
         if (result !== null) {
             let $template = document.createElement(result.templateName);
             $template.setAttribute("rbl-url-params", JSON.stringify(result.params));
