@@ -1,0 +1,11 @@
+{
+  "directories": {
+    "lib": "lib"
+  },
+  "main": "rebel-router.js",
+  "format": "es6",
+  "registry": "jspm",
+  "dependencies": {
+    "rebel-code": "^0.0.1"
+  }
+}
