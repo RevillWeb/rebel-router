@@ -6,6 +6,6 @@
   "format": "es6",
   "registry": "jspm",
   "dependencies": {
-    "rebel-core": "github:revillweb/rebel-core@^0.0.1"
+    "rebel-core": "github:revillweb/rebel-core"
   }
 }
