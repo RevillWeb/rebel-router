@@ -1,11 +1,11 @@
 {
-  "directories": {
-    "lib": "lib"
-  },
-  "main": "rebel-router.js",
-  "format": "es6",
-  "registry": "jspm",
-  "dependencies": {
-    "rebel-core": "github:revillweb/rebel-core"
+  "name": "rebel-router",
+  "version": "0.1.0",
+  "description": "A lightweight JavaScript router written in ES2015 which supports nested routes and allows web components to be provided as pages.",
+  "license": "MIT",
+  "repository": "https://github.com/RevillWeb/rebel-router.git",
+  "main": "src/rebel-router.js",
+  "devDependencies": {
+    "babel-cli": "^6.5.1"
   }
 }
