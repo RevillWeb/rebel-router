@@ -14,7 +14,7 @@ function _routeResult(templateName, route, regex, path) {
     return result;
 }
 
-export class RebelRouter extends HTMLElement {
+class RouterTemplate extends HTMLTemplateElement {
     attachedCallback() {
         this.createShadowRoot();
         this.render();
@@ -61,6 +61,33 @@ export class RebelRouter extends HTMLElement {
     setDefault(ViewClass) {
         this.add("*", ViewClass);
     }
+}
+
+export class RebelRouter {
+
+    constructor(name, config) {
+        this.template = null;
+        if (RebelRouter.validElementTag(name) === false) {
+            throw new Error("Invalid tag name provided.");
+        }
+        if (RebelRouter.isRegisteredElement(name) === false) {
+            const tag = document.registerElement(name, RouterTemplate);
+            const instance = new tag();
+            RebelRouter.addView(name, instance);
+            return instance;
+        }
+    }
+
+    static addView(name, classInstance) {
+        if (RebelRouter._views === undefined) {
+            RebelRouter._views = {};
+        }
+        RebelRouter._views[name] = classInstance;
+    }
+    static getView(name) {
+        return (RebelRouter._views !== undefined) ? RebelRouter._views[name] : undefined;
+    }
+
     static parseQueryString(url) {
         var result = {};
         if (url !== undefined) {
@@ -89,7 +116,7 @@ export class RebelRouter extends HTMLElement {
     }
     static classToTag(Class) {
         var name = Class.name.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
-        if (validElementTag(name) === false) {
+        if (RebelRouter.validElementTag(name) === false) {
             throw new Error("Class name couldn't be translated to tag.");
         }
         return name;
@@ -104,7 +131,9 @@ export class RebelRouter extends HTMLElement {
         }
         return name;
     }
-    static changeCallbacks;
+    static validElementTag(tag) {
+        return /^[a-z0-9\-]+$/.test(tag);
+    }
     static hashChange(callback) {
         if (RebelRouter.changeCallbacks === undefined) {
             RebelRouter.changeCallbacks = [];
@@ -141,3 +170,19 @@ export class RebelRouter extends HTMLElement {
         return result;
     }
 }
+
+class RebelView extends HTMLTemplateElement {
+    attachedCallback() {
+        //Get the name attribute from this elements
+        var name = this.getAttribute("name");
+        //If its not undefined then attempt to find a router instance with a matching name
+        if (name !== undefined) {
+            var instance = RebelRouter.getView(name);
+            //If an instance exists with that name append it to this element
+            if (instance !== undefined) {
+                this.appendChild(instance);
+            }
+        }
+    }
+}
+document.registerElement("rebel-view", RebelView);
