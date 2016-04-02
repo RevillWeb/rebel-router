@@ -6,7 +6,11 @@
  */
 import {RebelRouter} from '../../src/rebel-router.js';
 import {HomePage} from './pages/home.js';
+import {AboutPage} from './pages/about/about.js';
+import {ContactPage} from './pages/contact.js';
 
-let MainRouter = new RebelRouter("main-view");
-MainRouter.setDefault(HomePage);
-//document.body.appendChild(MainRouter);
+let MainRouter = new RebelRouter("main-view", {"mode": "history"});
+MainRouter
+    .add("/about", AboutPage)
+    .add("/contact", ContactPage)
+    .setDefault(HomePage);

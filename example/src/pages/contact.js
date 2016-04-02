@@ -4,10 +4,10 @@
  * GitHub: https://github.com/RevillWeb
  * Twitter: @RevillWeb
  */
-export class HomePage extends HTMLElement {
+export class ContactPage extends HTMLElement {
     createdCallback() {
         this.createShadowRoot();
-        this.template = `<p>This is the home page. <a href="/about" is="rebel-history">About</a> <a href="/contact" is="rebel-history">contact</a></p>`;
+        this.template = `<p>This is the contact page. <a href="/" is="rebel-history">Home</a></p>`;
     }
     attachedCallback() {
         this.render();

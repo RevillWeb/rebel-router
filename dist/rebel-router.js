@@ -28,23 +28,23 @@ function _routeResult(templateName, route, regex, path) {
     return result;
 }
 
-var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
-    _inherits(RebelRouter, _HTMLElement);
+var RouterTemplate = (function (_HTMLTemplateElement) {
+    _inherits(RouterTemplate, _HTMLTemplateElement);
 
-    function RebelRouter() {
-        _classCallCheck(this, RebelRouter);
+    function RouterTemplate() {
+        _classCallCheck(this, RouterTemplate);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelRouter).apply(this, arguments));
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RouterTemplate).apply(this, arguments));
     }
 
-    _createClass(RebelRouter, [{
+    _createClass(RouterTemplate, [{
         key: "attachedCallback",
         value: function attachedCallback() {
             var _this2 = this;
 
             this.createShadowRoot();
             this.render();
-            RebelRouter.hashChange(function () {
+            RebelRouter.pathChange(function () {
                 _this2.render();
             });
         }
@@ -91,13 +91,48 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
             } else {
                 this.paths[path] = name;
             }
+            return this;
         }
     }, {
         key: "setDefault",
         value: function setDefault(ViewClass) {
-            this.add("*", ViewClass);
+            return this.add("*", ViewClass);
         }
-    }], [{
+    }]);
+
+    return RouterTemplate;
+})(HTMLTemplateElement);
+
+var RebelRouter = exports.RebelRouter = (function () {
+    function RebelRouter(name, config) {
+        _classCallCheck(this, RebelRouter);
+
+        this.template = null;
+        if (RebelRouter.validElementTag(name) === false) {
+            throw new Error("Invalid tag name provided.");
+        }
+        if (RebelRouter.isRegisteredElement(name) === false) {
+            var tag = document.registerElement(name, RouterTemplate);
+            var instance = new tag();
+            RebelRouter.addView(name, instance);
+            return instance;
+        }
+    }
+
+    _createClass(RebelRouter, null, [{
+        key: "addView",
+        value: function addView(name, classInstance) {
+            if (RebelRouter._views === undefined) {
+                RebelRouter._views = {};
+            }
+            RebelRouter._views[name] = classInstance;
+        }
+    }, {
+        key: "getView",
+        value: function getView(name) {
+            return RebelRouter._views !== undefined ? RebelRouter._views[name] : undefined;
+        }
+    }, {
         key: "parseQueryString",
         value: function parseQueryString(url) {
             var result = {};
@@ -127,7 +162,7 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
         key: "classToTag",
         value: function classToTag(Class) {
             var name = Class.name.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
-            if (validElementTag(name) === false) {
+            if (RebelRouter.validElementTag(name) === false) {
                 throw new Error("Class name couldn't be translated to tag.");
             }
             return name;
@@ -147,19 +182,29 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
             return name;
         }
     }, {
-        key: "hashChange",
-        value: function hashChange(callback) {
+        key: "validElementTag",
+        value: function validElementTag(tag) {
+            return (/^[a-z0-9\-]+$/.test(tag)
+            );
+        }
+    }, {
+        key: "pathChange",
+        value: function pathChange(callback) {
             if (RebelRouter.changeCallbacks === undefined) {
                 RebelRouter.changeCallbacks = [];
             }
             RebelRouter.changeCallbacks.push(callback);
-            window.onhashchange = function (event) {
+            var changeHandler = function changeHandler(event) {
+                console.log("EVENT:", event);
                 if (event.newURL != event.oldURL) {
                     RebelRouter.changeCallbacks.forEach(function (callback) {
                         callback();
                     });
                 }
             };
+            window.onhashchange = changeHandler;
+            window.onpopstate = changeHandler;
+            window.addEventListener("pushstate", changeHandler);
         }
     }, {
         key: "getPathFromUrl",
@@ -190,4 +235,65 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
     }]);
 
     return RebelRouter;
-})(HTMLElement);
+})();
+
+var RebelView = (function (_HTMLTemplateElement2) {
+    _inherits(RebelView, _HTMLTemplateElement2);
+
+    function RebelView() {
+        _classCallCheck(this, RebelView);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelView).apply(this, arguments));
+    }
+
+    _createClass(RebelView, [{
+        key: "attachedCallback",
+        value: function attachedCallback() {
+            //Get the name attribute from this element
+            var name = this.getAttribute("name");
+            //If its not undefined then attempt to find a router instance with a matching name
+            if (name !== undefined) {
+                var instance = RebelRouter.getView(name);
+                //If an instance exists with that name append it to this element
+                if (instance !== undefined) {
+                    this.appendChild(instance);
+                }
+            }
+        }
+    }]);
+
+    return RebelView;
+})(HTMLTemplateElement);
+
+document.registerElement("rebel-view", RebelView);
+
+var RebelHistory = (function (_HTMLAnchorElement) {
+    _inherits(RebelHistory, _HTMLAnchorElement);
+
+    function RebelHistory() {
+        _classCallCheck(this, RebelHistory);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelHistory).apply(this, arguments));
+    }
+
+    _createClass(RebelHistory, [{
+        key: "attachedCallback",
+        value: function attachedCallback() {
+            this.addEventListener("click", function (event) {
+                event.preventDefault();
+                var path = this.getAttribute("href");
+                if (path !== undefined) {
+                    var target = this.getAttribute("target");
+                    window.dispatchEvent(new CustomEvent('pushstate', { "detail": { "path": path, "target": target } }));
+                }
+            });
+        }
+    }]);
+
+    return RebelHistory;
+})(HTMLAnchorElement);
+
+document.registerElement("rebel-history", {
+    extends: "a",
+    prototype: RebelHistory.prototype
+});

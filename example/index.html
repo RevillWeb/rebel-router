@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Rebel Router Example</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <script src="dist/bundle.js"></script>
-    <rebel-view name="main-view"></rebel-view>
+    <div class="wrapper">
+        <header id="main-header">
+            Header
+        </header>
+        <nav id="main-nav">
+            <a href="/about" is="rebel-history">About</a>
+            <a href="/contact" is="rebel-history">Contact</a>
+        </nav>
+        <section id="main-container">
+            <rebel-view name="main-view"></rebel-view>
+        </section>
+        <footer id="main-footer">
+            <p>Footer.</p>
+        </footer>
+    </div>
 </body>
 </html>
