@@ -6,13 +6,12 @@
  */
 export class HomePage extends HTMLElement {
     createdCallback() {
-        this.createShadowRoot();
-        this.template = `<p>This is the home page. <a href="/about" is="rebel-history">About</a> <a href="/contact" is="rebel-history">contact</a></p>`;
+        this.template = `<p>This is the home page.</p>`;
     }
     attachedCallback() {
         this.render();
     }
     render() {
-        this.shadowRoot.innerHTML = this.template;
+        this.innerHTML = this.template;
     }
 }

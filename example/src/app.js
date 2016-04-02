@@ -6,11 +6,14 @@
  */
 import {RebelRouter} from '../../src/rebel-router.js';
 import {HomePage} from './pages/home.js';
-import {AboutPage} from './pages/about/about.js';
-import {ContactPage} from './pages/contact.js';
+import {ResourceList} from './pages/resource-list.js';
+import {InfoPage} from './pages/info.js';
+import {RblRepeater} from '../../src/rebel-repeater.js';
+import {Loader} from './components/loader.js';
 
-let MainRouter = new RebelRouter("main-view", {"mode": "history"});
+//Configure the main app router with the main resource list page and the info page.
+let MainRouter = new RebelRouter("main-view");
 MainRouter
-    .add("/about", AboutPage)
-    .add("/contact", ContactPage)
+    .add("/info", InfoPage)
+    .add("/resource/{resource}", ResourceList)
     .setDefault(HomePage);

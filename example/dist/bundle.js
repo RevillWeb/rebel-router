@@ -50,20 +50,23 @@
 
 	var _home = __webpack_require__(2);
 
-	var _about = __webpack_require__(3);
+	var _resourceList = __webpack_require__(3);
 
-	var _contact = __webpack_require__(6);
+	var _info = __webpack_require__(4);
 
+	var _rebelRepeater = __webpack_require__(5);
+
+	var _loader = __webpack_require__(6);
+
+	//Configure the main app router with the main resource list page and the info page.
 	/**
 	 * Created by Leon Revill on 03/03/16.
 	 * Blog: http://www.revilweb.com
 	 * GitHub: https://github.com/RevillWeb
 	 * Twitter: @RevillWeb
 	 */
-
-
-	var MainRouter = new _rebelRouter.RebelRouter("main-view", { "mode": "history" });
-	MainRouter.add("/about", _about.AboutPage).add("/contact", _contact.ContactPage).setDefault(_home.HomePage);
+	var MainRouter = new _rebelRouter.RebelRouter("main-view");
+	MainRouter.add("/info", _info.InfoPage).add("/resource/{resource}", _resourceList.ResourceList).setDefault(_home.HomePage);
 
 /***/ },
 /* 1 */
@@ -90,11 +93,6 @@
 	 * Twitter: @RevillWeb
 	 */
 
-	var _MODES = {
-	    HISTORY: "history",
-	    HASH: "hash"
-	};
-
 	function _routeResult(templateName, route, regex, path) {
 	    var result = {};
 	    result.templateName = templateName;
@@ -118,20 +116,8 @@
 	        value: function init(config) {
 	            this.initialised = false;
 	            this.config = RebelRouter.mergeConfig({
-	                "mode": _MODES.HASH,
-	                "basePath": "/",
 	                "shadowRoot": false
 	            }, config);
-	            switch (this.config.mode) {
-	                case _MODES.HASH:
-	                    this.mode = _MODES.HASH;
-	                    break;
-	                case _MODES.HISTORY:
-	                    this.mode = _MODES.HISTORY;
-	                    break;
-	                default:
-	                    throw new Error("Invalid mode specified in config, please specify either 'hash' or 'history' (default: 'history').");
-	            }
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -146,7 +132,7 @@
 	                    this.root = this;
 	                }
 	                this.render();
-	                RebelRouter.pathChange(function (data) {
+	                RebelRouter.pathChange(function () {
 	                    _this2.render();
 	                });
 	                this.initialised = true;
@@ -155,7 +141,7 @@
 	    }, {
 	        key: "current",
 	        value: function current() {
-	            var path = this.getPathFromUrl();
+	            var path = RebelRouter.getPathFromUrl();
 	            for (var route in this.paths) {
 	                if (route !== "*") {
 	                    var regexString = "^" + route.replace(/{\w+}\/?/g, "(\\w+)\/?");
@@ -171,13 +157,16 @@
 	    }, {
 	        key: "render",
 	        value: function render() {
-	            console.log("RENDER!");
-	            this.root.innerHTML = "";
 	            var result = this.current();
 	            if (result !== null) {
-	                var $template = document.createElement(result.templateName);
-	                $template.setAttribute("rbl-url-params", JSON.stringify(result.params));
-	                this.root.appendChild($template);
+	                //let $template = null;
+	                if (result.templateName !== this.previousTemplate) {
+	                    this.root.innerHTML = "";
+	                    this.$template = document.createElement(result.templateName);
+	                    this.root.appendChild(this.$template);
+	                    this.previousTemplate = result.templateName;
+	                }
+	                this.$template.setAttribute("rbl-url-params", JSON.stringify(result.params));
 	            }
 	        }
 	    }, {
@@ -202,22 +191,6 @@
 	        key: "setDefault",
 	        value: function setDefault(ViewClass) {
 	            return this.add("*", ViewClass);
-	        }
-	    }, {
-	        key: "getPathFromUrl",
-	        value: function getPathFromUrl() {
-	            var result = null;
-	            if (this.config.mode === _MODES.HISTORY) {
-	                //var reg = new RegExp(this.config.basePath + "(.*)$");
-	                return window.location.pathname; //"/" + window.location.pathname.match(reg);
-	                //console.log("PATH NAME:", );?
-	                //console.log("RESULT:", result);
-	            } else {
-	                    result = window.location.href.match(/#(.*)$/);
-	                    if (result !== null) {
-	                        return result[1];
-	                    }
-	                }
 	        }
 	    }]);
 
@@ -364,6 +337,14 @@
 	            }
 	            return result;
 	        }
+	    }, {
+	        key: "getPathFromUrl",
+	        value: function getPathFromUrl() {
+	            var result = window.location.href.match(/#(.*)$/);
+	            if (result !== null) {
+	                return result[1];
+	            }
+	        }
 	    }]);
 
 	    return RebelRouter;
@@ -398,41 +379,6 @@
 	}(HTMLTemplateElement);
 
 	document.registerElement("rebel-view", RebelView);
-
-	var RebelHistory = function (_HTMLAnchorElement) {
-	    _inherits(RebelHistory, _HTMLAnchorElement);
-
-	    function RebelHistory() {
-	        _classCallCheck(this, RebelHistory);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelHistory).apply(this, arguments));
-	    }
-
-	    _createClass(RebelHistory, [{
-	        key: "attachedCallback",
-	        value: function attachedCallback() {
-	            this.addEventListener("click", function (event) {
-	                event.preventDefault();
-	                var path = this.getAttribute("href");
-	                if (path !== undefined) {
-	                    history.pushState(null, null, path);
-	                    window.dispatchEvent(new CustomEvent('pushstate', { "detail": { "path": path } }));
-	                }
-	            });
-	        }
-	    }]);
-
-	    return RebelHistory;
-	}(HTMLAnchorElement);
-
-	document.registerElement("rebel-history", {
-	    extends: "a",
-	    prototype: RebelHistory.prototype
-	});
-
-	window.onload = function () {
-	    console.log("helllo");
-	};
 
 /***/ },
 /* 2 */
@@ -471,8 +417,7 @@
 	    _createClass(HomePage, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
-	            this.createShadowRoot();
-	            this.template = "<p>This is the home page. <a href=\"/about\" is=\"rebel-history\">About</a> <a href=\"/contact\" is=\"rebel-history\">contact</a></p>";
+	            this.template = "<p>This is the home page.</p>";
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -482,7 +427,7 @@
 	    }, {
 	        key: "render",
 	        value: function render() {
-	            this.shadowRoot.innerHTML = this.template;
+	            this.innerHTML = this.template;
 	        }
 	    }]);
 
@@ -491,64 +436,127 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.AboutPage = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _tab = __webpack_require__(4);
-
-	var _tab2 = __webpack_require__(5);
-
-	var _rebelRouter = __webpack_require__(1);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Leon Revill on 07/03/16.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Blog: http://www.revilweb.com
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * GitHub: https://github.com/RevillWeb
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Twitter: @RevillWeb
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	/**
+	 * Created by Leon Revill on 07/03/16.
+	 * Blog: http://www.revilweb.com
+	 * GitHub: https://github.com/RevillWeb
+	 * Twitter: @RevillWeb
+	 */
 
-	var AboutPage = exports.AboutPage = function (_HTMLElement) {
-	    _inherits(AboutPage, _HTMLElement);
+	var ResourceList = exports.ResourceList = function (_HTMLElement) {
+	    _inherits(ResourceList, _HTMLElement);
 
-	    function AboutPage() {
-	        _classCallCheck(this, AboutPage);
+	    function ResourceList() {
+	        _classCallCheck(this, ResourceList);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(AboutPage).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ResourceList).apply(this, arguments));
 	    }
 
-	    _createClass(AboutPage, [{
-	        key: 'createdCallback',
+	    _createClass(ResourceList, [{
+	        key: "createdCallback",
 	        value: function createdCallback() {
-	            this.template = '<div class="page-container">\n            <h2>About</h2>\n            <nav class="page-nav">\n                <a href="/about/tab1" is="rebel-history">Tab 1</a>\n                <a href="/about/tab2" is="rebel-history">Tab 2</a>\n            </nav>\n            <div class="content">\n                <rebel-view name="about-view"></rebel-view>\n            </div>\n        </div>';
+	            this.baseUrl = "http://swapi.co/api/";
+	            this.type = null;
+	            this.innerHTML = "\n            <data-loading></data-loading>\n            <h1 id=\"title\"></h1>\n            <ul class=\"resource-list\">\n                <rbl-repeater id=\"list-row\"></rbl-repeater>\n            </ul>\n        ";
 	        }
 	    }, {
-	        key: 'attachedCallback',
+	        key: "attachedCallback",
 	        value: function attachedCallback() {
-	            var AboutRouter = new _rebelRouter.RebelRouter("about-view", { "mode": "history" });
-	            AboutRouter.add("/about/tab2", _tab2.AboutTab2).setDefault(_tab.AboutTab1);
 	            this.render();
 	        }
 	    }, {
-	        key: 'render',
+	        key: "attributeChangedCallback",
+	        value: function attributeChangedCallback(name) {
+	            switch (name) {
+	                case "rbl-url-params":
+	                    try {
+	                        var params = JSON.parse(this.getAttribute(name));
+	                        this.type = params.resource || null;
+	                        this.render();
+	                    } catch (e) {}
+	                    break;
+	            }
+	        }
+	    }, {
+	        key: "getTypeIcon",
+	        value: function getTypeIcon() {
+	            switch (this.type) {
+	                case "people":
+	                    return "icon-user5";
+	                    break;
+	                case "starships":
+	                    return "icon-rocket";
+	                    break;
+	                case "vehicles":
+	                    return "icon-truck";
+	                    break;
+	                case "species":
+	                    return "icon-eye";
+	                    break;
+	                case "planets":
+	                    return "icon-planet2";
+	                    break;
+	                default:
+	                    return "";
+	            }
+	        }
+	    }, {
+	        key: "render",
 	        value: function render() {
-	            this.innerHTML = this.template;
+	            var _this2 = this;
+
+	            if (this.type !== null) {
+	                var xhr;
+
+	                (function () {
+	                    var $title = _this2.querySelector("#title");
+	                    $title.innerHTML = "<span class='icon " + _this2.getTypeIcon() + "'></span>" + _this2.type.charAt(0).toUpperCase() + _this2.type.slice(1);
+	                    xhr = new XMLHttpRequest();
+
+	                    var $loader = _this2.querySelector('data-loading');
+	                    $loader.show();
+	                    xhr.onreadystatechange = function () {
+	                        if (xhr.readyState == 4 && xhr.status == 200) {
+	                            try {
+	                                var json = JSON.parse(xhr.response);
+	                                if (json.results !== undefined && json.results.length > 0) {
+	                                    var $list = _this2.querySelector("#list-row");
+	                                    if ($list !== null) {
+	                                        console.log("RESULTS:", json.results);
+	                                        $list.setTemplate('<li><a href="#">${name}</a></li>');
+	                                        $list.setContent(json.results);
+	                                        $loader.hide();
+	                                    }
+	                                }
+	                            } catch (e) {
+	                                console.error("Couldn't parse API response:", e);
+	                            }
+	                        }
+	                    };
+	                    xhr.open("GET", _this2.baseUrl + _this2.type);
+	                    xhr.send();
+	                })();
+	            }
 	        }
 	    }]);
 
-	    return AboutPage;
+	    return ResourceList;
 	}(HTMLElement);
 
 /***/ },
@@ -576,19 +584,19 @@
 	 * Twitter: @RevillWeb
 	 */
 
-	var AboutTab1 = exports.AboutTab1 = function (_HTMLElement) {
-	    _inherits(AboutTab1, _HTMLElement);
+	var InfoPage = exports.InfoPage = function (_HTMLElement) {
+	    _inherits(InfoPage, _HTMLElement);
 
-	    function AboutTab1() {
-	        _classCallCheck(this, AboutTab1);
+	    function InfoPage() {
+	        _classCallCheck(this, InfoPage);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(AboutTab1).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(InfoPage).apply(this, arguments));
 	    }
 
-	    _createClass(AboutTab1, [{
+	    _createClass(InfoPage, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
-	            this.template = "<p>Tab 1</p>";
+	            this.template = "<p>This is the contact page. <a href=\"#/\">Home</a></p>";
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -602,18 +610,20 @@
 	        }
 	    }]);
 
-	    return AboutTab1;
+	    return InfoPage;
 	}(HTMLElement);
 
 /***/ },
 /* 5 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -624,40 +634,113 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	/**
-	 * Created by Leon Revill on 07/03/16.
+	 * Created by Leon Revill on 10/01/2016.
 	 * Blog: http://www.revilweb.com
 	 * GitHub: https://github.com/RevillWeb
 	 * Twitter: @RevillWeb
 	 */
 
-	var AboutTab2 = exports.AboutTab2 = function (_HTMLElement) {
-	    _inherits(AboutTab2, _HTMLElement);
+	var RblRepeater = exports.RblRepeater = function (_HTMLElement) {
+	    _inherits(RblRepeater, _HTMLElement);
 
-	    function AboutTab2() {
-	        _classCallCheck(this, AboutTab2);
+	    function RblRepeater() {
+	        _classCallCheck(this, RblRepeater);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(AboutTab2).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(RblRepeater).apply(this, arguments));
 	    }
 
-	    _createClass(AboutTab2, [{
-	        key: "createdCallback",
+	    _createClass(RblRepeater, [{
+	        key: 'createdCallback',
 	        value: function createdCallback() {
-	            this.template = "<p>Tab 2</p>";
+	            this.content = [];
+	            this.template = this.innerHTML;
+	            if (this.getAttribute('shadow') == "true") {
+	                this.createShadowRoot();
+	            }
 	        }
 	    }, {
-	        key: "attachedCallback",
+	        key: 'attachedCallback',
 	        value: function attachedCallback() {
+
 	            this.render();
 	        }
 	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
-	            this.innerHTML = this.template;
+	            var _this2 = this;
+
+	            var element = this.getAttribute('element');
+	            var html = element !== null ? "<" + element.toLowerCase() + ">" : "";
+	            if (Array.isArray(this.content)) {
+	                this.content.forEach(function (item) {
+	                    html += RblRepeater.interpolate(_this2.template, item);
+	                });
+	            } else {
+	                throw new Error("Content should be an Array of objects.");
+	            }
+	            html += element !== null ? "</" + element.toLowerCase() + ">" : "";
+	            if (this.getAttribute('shadow') == "true") {
+	                this.shadowRoot.innerHTML = html;
+	                this.innerHTML = "";
+	            } else {
+	                this.innerHTML = html;
+	            }
+	        }
+	    }, {
+	        key: 'setContent',
+	        value: function setContent(content) {
+	            this.content = content;
+	            this.render();
+	        }
+	    }, {
+	        key: 'setTemplate',
+	        value: function setTemplate(template) {
+	            this.template = template;
+	            this.render();
+	        }
+	    }, {
+	        key: 'attributeChangedCallback',
+	        value: function attributeChangedCallback(name) {
+	            switch (name) {
+	                case "content":
+	                    this.content = RblRepeater.fromJson(this.getAttribute('content'));
+	                    this.render();
+	                    break;
+	            }
+	        }
+	    }], [{
+	        key: 'interpolate',
+	        value: function interpolate(template, obj) {
+	            if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) == "object") {
+	                for (var key in obj) {
+	                    var find = "${" + key + "}";
+	                    if (template.indexOf(find) > -1) {
+	                        template = template.replace(find, obj[key]);
+	                        delete obj[key];
+	                    }
+	                }
+	            }
+	            return template;
+	        }
+	    }, {
+	        key: 'fromJson',
+	        value: function fromJson(str) {
+	            var obj = null;
+	            if (typeof str == "string") {
+	                try {
+	                    obj = JSON.parse(str);
+	                } catch (e) {
+	                    throw new Error("Invalid JSON string provided. ");
+	                }
+	            }
+	            return obj;
 	        }
 	    }]);
 
-	    return AboutTab2;
+	    return RblRepeater;
 	}(HTMLElement);
+
+	document.registerElement("rbl-repeater", RblRepeater);
 
 /***/ },
 /* 6 */
@@ -684,35 +767,43 @@
 	 * Twitter: @RevillWeb
 	 */
 
-	var ContactPage = exports.ContactPage = function (_HTMLElement) {
-	    _inherits(ContactPage, _HTMLElement);
+	var Loader = exports.Loader = function (_HTMLElement) {
+	    _inherits(Loader, _HTMLElement);
 
-	    function ContactPage() {
-	        _classCallCheck(this, ContactPage);
+	    function Loader() {
+	        _classCallCheck(this, Loader);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ContactPage).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Loader).apply(this, arguments));
 	    }
 
-	    _createClass(ContactPage, [{
+	    _createClass(Loader, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
 	            this.createShadowRoot();
-	            this.template = "<p>This is the contact page. <a href=\"/\" is=\"rebel-history\">Home</a></p>";
+	            this.backgroundColor = "000";
+	            this.color = "ff6";
 	        }
 	    }, {
 	        key: "attachedCallback",
 	        value: function attachedCallback() {
-	            this.render();
+	            this.shadowRoot.innerHTML = "\n            <style>\n                .loader {\n                    position: absolute;\n                    background-color: #" + this.backgroundColor + ";\n                    top: 0;\n                    bottom: 0;\n                    width: 100%;\n                    color: #" + this.color + ";\n                    display: flex;\n                    flex-direction: column;\n                    justify-content: center;\n                    align-items: center;\n                    font-size: 32px;\n                }\n                .loader.hidden {\n                    display: none;\n                }\n                .spinner {\n                    width: 40px;\n                    height: 40px;\n                    margin: 100px auto;\n                    background-color: #" + this.color + ";\n                    border-radius: 100%;\n                    -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;\n                    animation: sk-scaleout 1.0s infinite ease-in-out;\n                }\n\n                @-webkit-keyframes sk-scaleout {\n                    0% { -webkit-transform: scale(0) }\n                    100% {\n                        -webkit-transform: scale(1.0);\n                        opacity: 0;\n                    }\n                }\n\n                @keyframes sk-scaleout {\n                    0% {\n                        -webkit-transform: scale(0);\n                        transform: scale(0);\n                    } 100% {\n                        -webkit-transform: scale(1.0);\n                        transform: scale(1.0);\n                        opacity: 0;\n                    }\n                }\n            </style>\n            <div class=\"loader\">\n                <div class=\"spinner\"></div>\n            </div>\n        ";
 	        }
 	    }, {
-	        key: "render",
-	        value: function render() {
-	            this.shadowRoot.innerHTML = this.template;
+	        key: "show",
+	        value: function show() {
+	            this.shadowRoot.querySelector(".loader").className = "loader";
+	        }
+	    }, {
+	        key: "hide",
+	        value: function hide() {
+	            this.shadowRoot.querySelector('.loader').className = "loader hidden";
 	        }
 	    }]);
 
-	    return ContactPage;
+	    return Loader;
 	}(HTMLElement);
+
+	document.registerElement('data-loading', Loader);
 
 /***/ }
 /******/ ]);

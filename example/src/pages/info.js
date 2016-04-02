@@ -4,9 +4,9 @@
  * GitHub: https://github.com/RevillWeb
  * Twitter: @RevillWeb
  */
-export class AboutTab2 extends HTMLElement {
+export class InfoPage extends HTMLElement {
     createdCallback() {
-        this.template = `<p>Tab 2</p>`;
+        this.template = `<p>This is the contact page. <a href="#/">Home</a></p>`;
     }
     attachedCallback() {
         this.render();

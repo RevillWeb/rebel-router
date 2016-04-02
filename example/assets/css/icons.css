@@ -1,0 +1,86 @@
+@font-face {
+    font-family: 'icomoon';
+    src:    url('../fonts/icomoon.eot?m52qjn');
+    src:    url('../fonts/icomoon.eot?m52qjn#iefix') format('embedded-opentype'),
+    url('../fonts/icomoon.ttf?m52qjn') format('truetype'),
+    url('../fonts/icomoon.woff?m52qjn') format('woff'),
+    url('../fonts/icomoon.svg?m52qjn#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    /* use !important to prevent issues with browser extensions that change fonts */
+    font-family: 'icomoon' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.icon-home2:before {
+    content: "\e901";
+}
+.icon-user5:before {
+    content: "\eb0a";
+}
+.icon-spinner9:before {
+    content: "\eb2a";
+}
+.icon-rocket:before {
+    content: "\ebdd";
+}
+.icon-truck:before {
+    content: "\ec0f";
+}
+.icon-planet2:before {
+    content: "\ec95";
+}
+.icon-eye:before {
+    content: "\ecae";
+}
+.icon-github:before {
+    content: "\ef0f";
+}
+.icon-cup:before {
+    content: "\ebc8";
+}
+
+@-moz-keyframes spin {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+.spin {
+    -webkit-animation-name: spin;
+    -webkit-animation-duration: 4000ms;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spin;
+    -moz-animation-duration: 4000ms;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spin;
+    -ms-animation-duration: 4000ms;
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+
+    animation-name: spin;
+    animation-duration: 4000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+

@@ -5,11 +5,6 @@
  * Twitter: @RevillWeb
  */
 
-const _MODES = {
-    HISTORY: "history",
-    HASH: "hash"
-};
-
 function _routeResult(templateName, route, regex, path) {
     let result = {};
     result.templateName = templateName;
@@ -23,20 +18,8 @@ class RouterTemplate extends HTMLTemplateElement {
     init(config) {
         this.initialised = false;
         this.config = RebelRouter.mergeConfig({
-            "mode": _MODES.HASH,
-            "basePath": "/",
             "shadowRoot": false
         }, config);
-        switch (this.config.mode) {
-            case _MODES.HASH:
-                this.mode = _MODES.HASH;
-                break;
-            case _MODES.HISTORY:
-                this.mode = _MODES.HISTORY;
-                break;
-            default:
-                throw new Error("Invalid mode specified in config, please specify either 'hash' or 'history' (default: 'history').");
-        }
     }
     attachedCallback() {
         if (this.initialised === false) {
@@ -47,14 +30,14 @@ class RouterTemplate extends HTMLTemplateElement {
                 this.root = this;
             }
             this.render();
-            RebelRouter.pathChange((data) => {
+            RebelRouter.pathChange(() => {
                 this.render();
             });
             this.initialised = true;
         }
     }
     current() {
-        const path = this.getPathFromUrl();
+        const path = RebelRouter.getPathFromUrl();
         for (const route in this.paths) {
             if (route !== "*") {
                 let regexString = "^" + route.replace(/{\w+}\/?/g, "(\\w+)\/?");
@@ -68,13 +51,16 @@ class RouterTemplate extends HTMLTemplateElement {
         return (this.paths["*"] !== undefined) ? _routeResult(this.paths["*"], "*", null, path) : null;
     }
     render() {
-        console.log("RENDER!");
-        this.root.innerHTML = "";
         const result = this.current();
         if (result !== null) {
-            let $template = document.createElement(result.templateName);
-            $template.setAttribute("rbl-url-params", JSON.stringify(result.params));
-            this.root.appendChild($template);
+            //let $template = null;
+            if (result.templateName !== this.previousTemplate) {
+                this.root.innerHTML = "";
+                this.$template = document.createElement(result.templateName);
+                this.root.appendChild(this.$template);
+                this.previousTemplate = result.templateName;
+            }
+            this.$template.setAttribute("rbl-url-params", JSON.stringify(result.params));
         }
     }
     add(path, ViewClass) {
@@ -94,25 +80,9 @@ class RouterTemplate extends HTMLTemplateElement {
     setDefault(ViewClass) {
         return this.add("*", ViewClass);
     }
-    getPathFromUrl() {
-        var result = null;
-        if (this.config.mode === _MODES.HISTORY) {
-            //var reg = new RegExp(this.config.basePath + "(.*)$");
-            return window.location.pathname; //"/" + window.location.pathname.match(reg);
-            //console.log("PATH NAME:", );?
-            //console.log("RESULT:", result);
-        } else {
-            result = window.location.href.match(/#(.*)$/);
-            if (result !== null) {
-                return result[1];
-            }
-        }
-
-    }
 }
 
 export class RebelRouter {
-
     constructor(name, config) {
         this.template = null;
         if (RebelRouter.validElementTag(name) === false) {
@@ -146,7 +116,6 @@ export class RebelRouter {
     static getView(name) {
         return (RebelRouter._views !== undefined) ? RebelRouter._views[name] : undefined;
     }
-
     static parseQueryString(url) {
         var result = {};
         if (url !== undefined) {
@@ -227,6 +196,12 @@ export class RebelRouter {
         }
         return result;
     }
+    static getPathFromUrl() {
+        var result = window.location.href.match(/#(.*)$/);
+        if (result !== null) {
+            return result[1];
+        }
+    }
 }
 
 class RebelView extends HTMLTemplateElement {
@@ -244,24 +219,3 @@ class RebelView extends HTMLTemplateElement {
     }
 }
 document.registerElement("rebel-view", RebelView);
-
-class RebelHistory extends HTMLAnchorElement {
-    attachedCallback() {
-        this.addEventListener("click", function(event) {
-            event.preventDefault();
-            var path = this.getAttribute("href");
-            if (path !== undefined) {
-                history.pushState(null, null, path);
-                window.dispatchEvent(new CustomEvent('pushstate', {"detail": {"path": path}}));
-            }
-        });
-    }
-}
-document.registerElement("rebel-history", {
-    extends: "a",
-    prototype: RebelHistory.prototype
-});
-
-window.onload = () => {
-    console.log("helllo");
-}
