@@ -52,23 +52,25 @@
 
 	var _resourceList = __webpack_require__(3);
 
-	var _people = __webpack_require__(9);
+	var _people = __webpack_require__(4);
 
-	var _info = __webpack_require__(5);
+	var _starships = __webpack_require__(9);
 
-	var _rebelRepeater = __webpack_require__(6);
+	var _info = __webpack_require__(6);
 
-	var _rebelLoading = __webpack_require__(7);
+	var _rebelRepeater = __webpack_require__(7);
+
+	var _rebelLoading = __webpack_require__(8);
 
 	//Configure the main app router with the main resource list page and the info page.
-	var MainRouter = new _rebelRouter.RebelRouter("main-view"); /**
-	                                                             * Created by Leon Revill on 03/03/16.
-	                                                             * Blog: http://www.revilweb.com
-	                                                             * GitHub: https://github.com/RevillWeb
-	                                                             * Twitter: @RevillWeb
-	                                                             */
-
-	MainRouter.add("/info", _info.InfoPage).add("/resources/{resource}", _resourceList.ResourcesList).add("/resource/people/{id}", _people.PeopleResource).setDefault(_home.HomePage);
+	/**
+	 * Created by Leon Revill on 03/03/16.
+	 * Blog: http://www.revilweb.com
+	 * GitHub: https://github.com/RevillWeb
+	 * Twitter: @RevillWeb
+	 */
+	var MainRouter = new _rebelRouter.RebelRouter("main-view");
+	MainRouter.add("/info", _info.InfoPage).add("/resources/{resource}", _resourceList.ResourcesList).add("/resource/people/{id}", _people.PeopleResource).add("/resource/starships/{id}", _starships.StarshipsResource).setDefault(_home.HomePage);
 
 /***/ },
 /* 1 */
@@ -450,7 +452,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -481,16 +483,34 @@
 	    }
 
 	    _createClass(ResourcesList, [{
-	        key: "createdCallback",
+	        key: 'createdCallback',
 	        value: function createdCallback() {
+	            var _this2 = this;
+
 	            this.baseUrl = "http://swapi.co/api/";
 	            this.type = null;
-	            this.innerHTML = "\n            <rbl-loading id=\"loading\" color=\"#ff6\" background-color=\"#000\"></rbl-loading>\n            <h1 id=\"title\"></h1>\n            <ul class=\"resource-list\">\n                <rbl-repeater id=\"list-row\"></rbl-repeater>\n            </ul>\n        ";
+	            this.page = 1;
+	            this.response = null;
+	            this.innerHTML = '\n            <rbl-loading id="loading" color="#ff6" background-color="#000"></rbl-loading>\n            <h1 id="title"></h1>\n            <ul class="resource-list">\n                <rbl-repeater id="list-row"></rbl-repeater>\n            </ul>\n            <div class="list-controls">\n                <button class="btn" id="previous"><span class="icon icon-arrow-left2"></span> Preview</button>\n                <div class="num" id="page-num">1</div>\n                <button class="btn" id="next">Next <span class="icon icon-arrow-right2"></span></button>\n            </div>\n        ';
+	            this.$loader = this.querySelector('#loading');
+	            this.$next = this.querySelector('#next');
+	            this.$next.addEventListener("click", function () {
+	                if (_this2.response.next !== null) {
+	                    _this2.getData(ResourcesList.getPageNumber(_this2.response.next));
+	                }
+	            });
+	            this.$previous = this.querySelector('#previous');
+	            this.$previous.addEventListener("click", function () {
+	                if (_this2.response.previous !== null) {
+	                    _this2.getData(ResourcesList.getPageNumber(_this2.response.previous));
+	                }
+	            });
+	            this.$pageNum = this.querySelector('#page-num');
 	        }
 	    }, {
-	        key: "attachedCallback",
+	        key: 'attachedCallback',
 	        value: function attachedCallback() {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            this.querySelector(".resource-list").addEventListener("click", function (event) {
 	                var url = event.target.dataset.url;
@@ -499,22 +519,22 @@
 	                }
 	                var parts = url.split("/");
 	                var id = parts[parts.length - 1];
-	                window.location.hash = "/resource/" + _this2.type + "/" + id;
+	                window.location.hash = "/resource/" + _this3.type + "/" + id;
 	            });
-	            this.render();
+	            this.getData();
 	        }
 	    }, {
-	        key: "attributeChangedCallback",
+	        key: 'attributeChangedCallback',
 	        value: function attributeChangedCallback(name) {
 	            switch (name) {
 	                case "resource":
 	                    this.type = this.getAttribute("resource");
-	                    this.render();
+	                    this.getData();
 	                    break;
 	            }
 	        }
 	    }, {
-	        key: "getTypeIcon",
+	        key: 'getTypeIcon',
 	        value: function getTypeIcon() {
 	            switch (this.type) {
 	                case "people":
@@ -537,41 +557,55 @@
 	            }
 	        }
 	    }, {
-	        key: "render",
-	        value: function render() {
-	            var _this3 = this;
+	        key: 'getData',
+	        value: function getData(page) {
+	            var _this4 = this;
 
 	            if (this.type !== null) {
-	                var xhr;
-
-	                (function () {
-	                    var $title = _this3.querySelector("#title");
-	                    $title.innerHTML = "<span class='icon " + _this3.getTypeIcon() + "'></span>" + _this3.type.charAt(0).toUpperCase() + _this3.type.slice(1);
-	                    xhr = new XMLHttpRequest();
-
-	                    var $loader = _this3.querySelector('#loading');
-	                    $loader.show();
-	                    xhr.onreadystatechange = function () {
-	                        if (xhr.readyState == 4 && xhr.status == 200) {
-	                            try {
-	                                var json = JSON.parse(xhr.response);
-	                                if (json.results !== undefined && json.results.length > 0) {
-	                                    var $list = _this3.querySelector("#list-row");
-	                                    if ($list !== null) {
-	                                        $list.setTemplate('<li><a href="javascript:void(0)" class="resource-click" data-url="${url}">${name}</a></li>');
-	                                        $list.setContent(json.results);
-	                                        $loader.hide();
-	                                    }
-	                                }
-	                            } catch (e) {
-	                                console.error("Couldn't parse API response:", e);
-	                            }
+	                var $title = this.querySelector("#title");
+	                $title.innerHTML = "<span class='icon " + this.getTypeIcon() + "'></span>" + this.type.charAt(0).toUpperCase() + this.type.slice(1);
+	                var xhr = new XMLHttpRequest();
+	                this.$loader.show();
+	                xhr.onreadystatechange = function () {
+	                    if (xhr.readyState == 4 && xhr.status == 200) {
+	                        try {
+	                            _this4.response = JSON.parse(xhr.response);
+	                            _this4.render();
+	                        } catch (e) {
+	                            console.error("Couldn't parse API response:", e);
 	                        }
-	                    };
-	                    xhr.open("GET", _this3.baseUrl + _this3.type);
-	                    xhr.send();
-	                })();
+	                    }
+	                };
+	                if (page !== undefined) {
+	                    this.page = page;
+	                }
+	                xhr.open("GET", this.baseUrl + this.type + "?page=" + this.page);
+	                xhr.send();
 	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var $list = this.querySelector("#list-row");
+	            if ($list !== null) {
+	                $list.setTemplate('<li><a href="javascript:void(0)" class="resource-click" data-url="${url}">${name}</a></li>');
+	                this.$next.className = this.$next.className.replace(" disabled", "");
+	                if (this.response.next === null) {
+	                    this.$next.className += " disabled";
+	                }
+	                this.$previous.className = this.$previous.className.replace(" disabled", "");
+	                if (this.response.previous === null) {
+	                    this.$previous.className += " disabled";
+	                }
+	                $list.setContent(this.response.results);
+	                this.$pageNum.innerHTML = this.page;
+	                this.$loader.hide();
+	            }
+	        }
+	    }], [{
+	        key: 'getPageNumber',
+	        value: function getPageNumber(url) {
+	            return url.split("?")[1].split("=")[1];
 	        }
 	    }]);
 
@@ -579,8 +613,168 @@
 	}(HTMLElement);
 
 /***/ },
-/* 4 */,
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.PeopleResource = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _resourceItem = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Leon Revill on 07/03/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Blog: http://www.revilweb.com
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * GitHub: https://github.com/RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Twitter: @RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var PeopleResource = exports.PeopleResource = function (_ResourceItem) {
+	    _inherits(PeopleResource, _ResourceItem);
+
+	    function PeopleResource() {
+	        _classCallCheck(this, PeopleResource);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PeopleResource).apply(this, arguments));
+	    }
+
+	    _createClass(PeopleResource, [{
+	        key: "attachedCallback",
+	        value: function attachedCallback() {
+	            var _this2 = this;
+
+	            this.type = "people";
+	            this.renderChild = function () {
+	                _this2.$stats.innerHTML = PeopleResource.renderTemplate(_this2.data);
+	            };
+	        }
+	    }], [{
+	        key: "renderTemplate",
+	        value: function renderTemplate(data) {
+	            var genderIcon = "transgender-alt";
+	            if (data.gender == "male") {
+	                genderIcon = "male";
+	            } else if (data.gender == "female") {
+	                genderIcon = "female";
+	            }
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-" + genderIcon + "\"></span></label> <span>" + data.gender + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-calendar5\"></span></label> " + data.birth_year + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Height:</label> " + data.height + "</p>\n                    <span class=\"icon icon-man\"></span>\n                    <p><label>Mass:</label> " + data.mass + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Eye Colour:</label> " + data.eye_color + "</p>\n                    <p><label>Hair Colour:</label> " + data.hair_color + "</p>\n                    <p><label>Skin Colour:</label> " + data.skin_color + "</p>\n                </div>\n            </div>";
+	        }
+	    }]);
+
+	    return PeopleResource;
+	}(_resourceItem.ResourceItem);
+
+/***/ },
 /* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Created by Leon Revill on 07/03/16.
+	 * Blog: http://www.revilweb.com
+	 * GitHub: https://github.com/RevillWeb
+	 * Twitter: @RevillWeb
+	 */
+
+	var ResourceItem = exports.ResourceItem = function (_HTMLElement) {
+	    _inherits(ResourceItem, _HTMLElement);
+
+	    function ResourceItem() {
+	        _classCallCheck(this, ResourceItem);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ResourceItem).apply(this, arguments));
+	    }
+
+	    _createClass(ResourceItem, [{
+	        key: 'createdCallback',
+	        value: function createdCallback() {
+	            this.baseUrl = "http://swapi.co/api/";
+	            this.id = null;
+	            this.type = null;
+	            this.renderChild = null;
+	            this.data = {};
+	            this.innerHTML = '\n            <rbl-loading id="loading" color="#ff6" background-color="#000"></rbl-loading>\n            <a href="#" id="back-btn"><span class="icon icon-arrow-left2"></span> Back</a>\n            <h1 id="title"></h1>\n            <div id="stats"></div>\n        ';
+	            this.$loader = this.querySelector('#loading');
+	            this.$stats = this.querySelector('#stats');
+	        }
+	    }, {
+	        key: 'attributeChangedCallback',
+	        value: function attributeChangedCallback(name) {
+	            var value = this.getAttribute(name);
+	            switch (name) {
+	                case "id":
+	                    this.id = value;
+	                    this.getData();
+	                    break;
+	            }
+	        }
+	    }, {
+	        key: 'getData',
+	        value: function getData() {
+	            var _this2 = this;
+
+	            this.$loader.show();
+	            if (this.id !== null && this.type !== null) {
+	                var xhr;
+
+	                (function () {
+	                    var $title = _this2.querySelector("#title");
+	                    var $back = _this2.querySelector("#back-btn");
+	                    $back.setAttribute("href", "#/resources/" + _this2.type);
+	                    xhr = new XMLHttpRequest();
+
+	                    xhr.onreadystatechange = function () {
+	                        if (xhr.readyState == 4 && xhr.status == 200) {
+	                            try {
+	                                var json = JSON.parse(xhr.response);
+	                                $title.innerHTML = json.name;
+	                                _this2.data = json;
+	                                console.log("RESOURCE DATA:", _this2.data);
+	                                if (_this2.renderChild !== null) {
+	                                    _this2.renderChild();
+	                                }
+	                                _this2.$loader.hide();
+	                                $back.className = "back-btn show";
+	                            } catch (e) {
+	                                console.error("Couldn't parse API response:", e);
+	                            }
+	                        }
+	                    };
+	                    xhr.open("GET", _this2.baseUrl + _this2.type + "/" + _this2.id);
+	                    xhr.send();
+	                })();
+	            }
+	        }
+	    }]);
+
+	    return ResourceItem;
+	}(HTMLElement);
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -634,7 +828,7 @@
 	}(HTMLElement);
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -763,7 +957,7 @@
 	document.registerElement("rbl-repeater", RblRepeater);
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -822,98 +1016,6 @@
 	document.registerElement('rbl-loading', RblLoading);
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	/**
-	 * Created by Leon Revill on 07/03/16.
-	 * Blog: http://www.revilweb.com
-	 * GitHub: https://github.com/RevillWeb
-	 * Twitter: @RevillWeb
-	 */
-
-	var ResourceItem = exports.ResourceItem = function (_HTMLElement) {
-	    _inherits(ResourceItem, _HTMLElement);
-
-	    function ResourceItem() {
-	        _classCallCheck(this, ResourceItem);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ResourceItem).apply(this, arguments));
-	    }
-
-	    _createClass(ResourceItem, [{
-	        key: "createdCallback",
-	        value: function createdCallback() {
-	            this.baseUrl = "http://swapi.co/api/";
-	            this.id = null;
-	            this.type = null;
-	            this.data = null;
-	            this.innerHTML = "\n            <rbl-loading id=\"loading\" color=\"#ff6\" background-color=\"#000\"></rbl-loading>\n            <h1 id=\"title\"></h1>\n        ";
-	            this.$loader = this.querySelector('#loading');
-	        }
-	    }, {
-	        key: "attributeChangedCallback",
-	        value: function attributeChangedCallback(name) {
-	            var value = this.getAttribute(name);
-	            switch (name) {
-	                case "id":
-	                    this.id = value;
-	                    this.render();
-	                    break;
-	            }
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            var _this2 = this;
-
-	            console.log("TYPE:", this.type);
-	            this.$loader.show();
-	            if (this.id !== null && this.type !== null) {
-	                var xhr;
-
-	                (function () {
-	                    var $title = _this2.querySelector("#title");
-	                    xhr = new XMLHttpRequest();
-
-	                    xhr.onreadystatechange = function () {
-	                        if (xhr.readyState == 4 && xhr.status == 200) {
-	                            try {
-	                                var json = JSON.parse(xhr.response);
-	                                $title.innerHTML = json.name;
-	                                _this2.data = json;
-	                                console.log("DATA:", _this2.data);
-	                                _this2.$loader.hide();
-	                            } catch (e) {
-	                                console.error("Couldn't parse API response:", e);
-	                            }
-	                        }
-	                    };
-	                    xhr.open("GET", _this2.baseUrl + _this2.type + "/" + _this2.id);
-	                    xhr.send();
-	                })();
-	            }
-	        }
-	    }]);
-
-	    return ResourceItem;
-	}(HTMLElement);
-
-/***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -922,11 +1024,11 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.PeopleResource = undefined;
+	exports.StarshipsResource = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _resourceItem = __webpack_require__(8);
+	var _resourceItem = __webpack_require__(5);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -940,75 +1042,33 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 
-	var PeopleResource = exports.PeopleResource = function (_ResourceItem) {
-	    _inherits(PeopleResource, _ResourceItem);
+	var StarshipsResource = exports.StarshipsResource = function (_ResourceItem) {
+	    _inherits(StarshipsResource, _ResourceItem);
 
-	    function PeopleResource() {
-	        _classCallCheck(this, PeopleResource);
+	    function StarshipsResource() {
+	        _classCallCheck(this, StarshipsResource);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PeopleResource).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(StarshipsResource).apply(this, arguments));
 	    }
 
-	    _createClass(PeopleResource, [{
+	    _createClass(StarshipsResource, [{
 	        key: "attachedCallback",
-
-	        //createdCallback() {
-	        //    super.createdCallback();
-	        //
-	        //}
 	        value: function attachedCallback() {
-	            this.type = "people";
-	            //super.render();
-	        }
-	        //attributeChangedCallback(name) {
-	        //    const value = this.getAttribute(name);
-	        //    switch (name) {
-	        //        case "type":
-	        //            this.type = value;
-	        //            super.render();
-	        //            break;
-	        //    }
-	        //}
-	        //attributeChangedCallback(name) {
-	        //    //switch (name) {
-	        //    //    case "rbl-url-params":
-	        //    //        try {
-	        //    //            var params = JSON.parse(this.getAttribute(name));
-	        //    //            this.id = params.id || null;
-	        //    //            this.type = params.type || null;
-	        //    //        } catch (e) {
-	        //    //            console.log("Couldn't parse params.");
-	        //    //        }
-	        //    //        this.render();
-	        //    //        break;
-	        //    //}
-	        //}
-	        //render() {
-	        //    this.$loader.show();
-	        //    if (this.id !== null && this.type !== null) {
-	        //        let $title = this.querySelector("#title");
-	        //        var xhr = new XMLHttpRequest();
-	        //        xhr.onreadystatechange = () => {
-	        //            if (xhr.readyState == 4 && xhr.status == 200) {
-	        //                try {
-	        //                    const json = JSON.parse(xhr.response);
-	        //                    $title.innerHTML = json.name;
-	        //                    this.data = json;
-	        //                    console.log("DATA:", this.data);
-	        //                    this.$loader.hide();
-	        //                } catch (e) {
-	        //                    console.error("Couldn't parse API response:", e);
-	        //                }
-	        //            }
-	        //        };
-	        //        xhr.open("GET", this.baseUrl + this.type + "/" + this.id);
-	        //        xhr.send();
-	        //    }
-	        //}
+	            var _this2 = this;
 
+	            this.type = "starships";
+	            this.renderChild = function () {
+	                _this2.$stats.innerHTML = StarshipsResource.renderTemplate(_this2.data);
+	            };
+	        }
+	    }], [{
+	        key: "renderTemplate",
+	        value: function renderTemplate(data) {
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-coins\"></span></label> <span>" + data.cost_in_credits + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-shield4\"></span></label> " + data.starship_class + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Length:</label> " + data.length + "</p>\n                    <span class=\"icon icon-rocket\"></span>\n                    <p><label>Cargo Capacity:</label> " + data.cargo_capacity + "</p>\n                    <p><label>Passengers:</label> " + data.passengers + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Model:</label> " + data.model + "</p>\n                    <p><label>Crew:</label> " + data.crew + "</p>\n                    <p><label>Hyperdrive Rating:</label> " + data.hyperdrive_rating + "</p>\n                    <p><label>Manufacturer:</label> <br />" + data.manufacturer + "</p>\n                </div>\n            </div>";
+	        }
 	    }]);
 
-	    return PeopleResource;
+	    return StarshipsResource;
 	}(_resourceItem.ResourceItem);
 
 /***/ }

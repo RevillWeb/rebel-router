@@ -65,7 +65,7 @@ a:hover, a:active {
 }
 #main-container {
     flex: 1;
-    min-height: 500px;
+    min-height: 400px;
     background-color: rgba(34, 34, 34, 0.50);
     position: relative;
 }
@@ -88,6 +88,51 @@ a:hover, a:active {
     padding: 0 10px;
     color: #222;
 }
+.back-btn {
+    display: none;
+    position: absolute;
+    left: -5px;
+    top: 5px;
+    height: 30px;
+    background: #222;
+    text-align: center;
+    line-height: 30px;
+    padding: 0 10px;
+    color: #999;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.back-btn.show {
+    display: block;
+}
+.back-btn .icon {
+    vertical-align: middle;
+    display: inline-block;
+    margin-top: -3px;
+}
+.btn {
+    background-color: #ff6;
+    border: none;
+    color: #333;
+    padding: 0 10px;
+    line-height: 40px;
+    cursor: pointer;
+    -webkit-transition: background-color 200ms;
+    -moz-transition: background-color 200ms;
+    transition: background-color 200ms;
+}
+.btn:hover {
+    background-color: #b0b048;
+}
+.btn.disabled, .btn.disabled:hover {
+    background-color: #CCC;
+}
+.btn .icon {
+    vertical-align: middle;
+    display: inline-block;
+    margin-top: -1px;
+}
+
+/** RESOURCE LIST **/
 .resource-list {
     margin: 0;
     list-style: none;
@@ -103,6 +148,63 @@ a:hover, a:active {
 }
 .resource-list li a:hover {
     background-color: #111;
+}
+.list-controls {
+    display: flex;
+}
+.list-controls .btn {
+    flex: 1;
+}
+.list-controls .num {
+    width: 50px;
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-weight: bold;
+}
+
+/** RESOURCE ITEM **/
+.stats-section {
+    height: auto;
+    flex-grow: 1;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+}
+.stats-section .section {
+    background-color: #222;
+    margin: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
+    flex: 1;
+    height: auto;
+    float: left;
+    padding: 0 10px;
+}
+.stats-section label {
+    font-size: 12px;
+    vertical-align: middle;
+    color: #b0b048;
+}
+.stats-section label .icon {
+    font-size: 22px;
+    vertical-align: middle;
+    display: inline-block;
+    margin: -3px 5px 0 0;
+}
+.stats-section .section.build p:first-child {
+    margin-bottom: 10px;
+}
+.stats-section .section.build p:last-child {
+    margin-top: 10px;
+}
+.stats-section .section.build .icon {
+    font-size: 80px;
 }
 
 

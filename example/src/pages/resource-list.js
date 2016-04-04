@@ -8,13 +8,37 @@ export class ResourcesList extends HTMLElement {
     createdCallback() {
         this.baseUrl = "http://swapi.co/api/";
         this.type = null;
+        this.page = 1;
+        this.response = null;
         this.innerHTML = `
             <rbl-loading id="loading" color="#ff6" background-color="#000"></rbl-loading>
             <h1 id="title"></h1>
             <ul class="resource-list">
                 <rbl-repeater id="list-row"></rbl-repeater>
             </ul>
+            <div class="list-controls">
+                <button class="btn" id="previous"><span class="icon icon-arrow-left2"></span> Preview</button>
+                <div class="num" id="page-num">1</div>
+                <button class="btn" id="next">Next <span class="icon icon-arrow-right2"></span></button>
+            </div>
         `;
+        this.$loader = this.querySelector('#loading');
+        this.$next = this.querySelector('#next');
+        this.$next.addEventListener("click", () => {
+            if (this.response.next !== null) {
+                this.getData(ResourcesList.getPageNumber(this.response.next));
+            }
+        });
+        this.$previous = this.querySelector('#previous');
+        this.$previous.addEventListener("click", () => {
+            if (this.response.previous !== null) {
+                this.getData(ResourcesList.getPageNumber(this.response.previous));
+            }
+        });
+        this.$pageNum = this.querySelector('#page-num');
+    }
+    static getPageNumber(url) {
+        return url.split("?")[1].split("=")[1];
     }
     attachedCallback() {
         this.querySelector(".resource-list").addEventListener("click", (event) => {
@@ -26,13 +50,13 @@ export class ResourcesList extends HTMLElement {
             var id = parts[parts.length - 1];
             window.location.hash = "/resource/" + this.type + "/" + id;
         });
-        this.render();
+        this.getData();
     }
     attributeChangedCallback(name) {
         switch (name) {
             case "resource":
                 this.type = this.getAttribute("resource");
-                this.render();
+                this.getData();
                 break;
         }
     }
@@ -57,32 +81,44 @@ export class ResourcesList extends HTMLElement {
                 return "";
         }
     }
-    render() {
+    getData(page) {
         if (this.type !== null) {
             let $title = this.querySelector("#title");
             $title.innerHTML = "<span class='icon " + this.getTypeIcon() + "'></span>" + this.type.charAt(0).toUpperCase() + this.type.slice(1);
             var xhr = new XMLHttpRequest();
-            const $loader = this.querySelector('#loading');
-            $loader.show();
+            this.$loader.show();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     try {
-                        const json = JSON.parse(xhr.response);
-                        if (json.results !== undefined && json.results.length > 0) {
-                            const $list = this.querySelector("#list-row");
-                            if ($list !== null) {
-                                $list.setTemplate('<li><a href="javascript:void(0)" class="resource-click" data-url="${url}">${name}</a></li>');
-                                $list.setContent(json.results);
-                                $loader.hide();
-                            }
-                        }
+                        this.response = JSON.parse(xhr.response);
+                        this.render();
                     } catch (e) {
                         console.error("Couldn't parse API response:", e);
                     }
                 }
             };
-            xhr.open("GET", this.baseUrl + this.type);
+            if (page !== undefined) {
+                this.page = page;
+            }
+            xhr.open("GET", this.baseUrl + this.type + "?page=" + this.page);
             xhr.send();
+        }
+    }
+    render() {
+        const $list = this.querySelector("#list-row");
+        if ($list !== null) {
+            $list.setTemplate('<li><a href="javascript:void(0)" class="resource-click" data-url="${url}">${name}</a></li>');
+            this.$next.className = this.$next.className.replace(" disabled", "");
+            if (this.response.next === null) {
+                this.$next.className += " disabled";
+            }
+            this.$previous.className = this.$previous.className.replace(" disabled", "");
+            if (this.response.previous === null) {
+                this.$previous.className += " disabled";
+            }
+            $list.setContent(this.response.results);
+            this.$pageNum.innerHTML = this.page;
+            this.$loader.hide();
         }
     }
 }

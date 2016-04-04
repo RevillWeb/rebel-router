@@ -6,57 +6,39 @@
  */
 import {ResourceItem} from "../resource-item.js";
 export class PeopleResource extends ResourceItem {
-    //createdCallback() {
-    //    super.createdCallback();
-    //
-    //}
     attachedCallback() {
         this.type = "people";
-        //super.render();
+        this.renderChild = () => {
+            this.$stats.innerHTML = PeopleResource.renderTemplate(this.data);
+        };
     }
-    //attributeChangedCallback(name) {
-    //    const value = this.getAttribute(name);
-    //    switch (name) {
-    //        case "type":
-    //            this.type = value;
-    //            super.render();
-    //            break;
-    //    }
-    //}
-    //attributeChangedCallback(name) {
-    //    //switch (name) {
-    //    //    case "rbl-url-params":
-    //    //        try {
-    //    //            var params = JSON.parse(this.getAttribute(name));
-    //    //            this.id = params.id || null;
-    //    //            this.type = params.type || null;
-    //    //        } catch (e) {
-    //    //            console.log("Couldn't parse params.");
-    //    //        }
-    //    //        this.render();
-    //    //        break;
-    //    //}
-    //}
-    //render() {
-    //    this.$loader.show();
-    //    if (this.id !== null && this.type !== null) {
-    //        let $title = this.querySelector("#title");
-    //        var xhr = new XMLHttpRequest();
-    //        xhr.onreadystatechange = () => {
-    //            if (xhr.readyState == 4 && xhr.status == 200) {
-    //                try {
-    //                    const json = JSON.parse(xhr.response);
-    //                    $title.innerHTML = json.name;
-    //                    this.data = json;
-    //                    console.log("DATA:", this.data);
-    //                    this.$loader.hide();
-    //                } catch (e) {
-    //                    console.error("Couldn't parse API response:", e);
-    //                }
-    //            }
-    //        };
-    //        xhr.open("GET", this.baseUrl + this.type + "/" + this.id);
-    //        xhr.send();
-    //    }
-    //}
+    static renderTemplate(data) {
+        let genderIcon = "transgender-alt";
+        if (data.gender == "male") {
+            genderIcon = "male";
+        } else if (data.gender == "female") {
+            genderIcon = "female";
+        }
+        return `
+            <div class="stats-section">
+                <div class="section">
+                    <p><label><span class="icon icon-${genderIcon}"></span></label> <span>${data.gender}</span></p>
+                </div>
+                <div class="section">
+                    <p><label><span class="icon icon-calendar5"></span></label> ${data.birth_year}</p>
+                </div>
+            </div>
+            <div class="stats-section">
+                <div class="section build">
+                    <p><label>Height:</label> ${data.height}</p>
+                    <span class="icon icon-man"></span>
+                    <p><label>Mass:</label> ${data.mass}</p>
+                </div>
+                <div class="section">
+                    <p><label>Eye Colour:</label> ${data.eye_color}</p>
+                    <p><label>Hair Colour:</label> ${data.hair_color}</p>
+                    <p><label>Skin Colour:</label> ${data.skin_color}</p>
+                </div>
+            </div>`;
+    }
 }

@@ -8,6 +8,7 @@ import {RebelRouter} from '../../src/rebel-router.js';
 import {HomePage} from './pages/home.js';
 import {ResourcesList} from './pages/resource-list.js';
 import {PeopleResource} from './pages/resources/people.js';
+import {StarshipsResource} from './pages/resources/starships.js';
 import {InfoPage} from './pages/info.js';
 import {RblRepeater} from '../../src/rebel-repeater.js';
 import {RblLoading} from './../../src/rebel-loading.js';
@@ -18,4 +19,5 @@ MainRouter
     .add("/info", InfoPage)
     .add("/resources/{resource}", ResourcesList)
     .add("/resource/people/{id}", PeopleResource)
+    .add("/resource/starships/{id}", StarshipsResource)
     .setDefault(HomePage);

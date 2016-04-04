@@ -23,14 +23,29 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.icon-transgender-alt:before {
+    content: "\e900";
+}
 .icon-home2:before {
     content: "\e901";
+}
+.icon-coins:before {
+    content: "\ea0a";
+}
+.icon-calendar5:before {
+    content: "\ea63";
 }
 .icon-user5:before {
     content: "\eb0a";
 }
+.icon-users4:before {
+    content: "\eb0c";
+}
 .icon-spinner9:before {
     content: "\eb2a";
+}
+.icon-cup:before {
+    content: "\ebc8";
 }
 .icon-rocket:before {
     content: "\ebdd";
@@ -38,49 +53,39 @@
 .icon-truck:before {
     content: "\ec0f";
 }
+.icon-shield4:before {
+    content: "\ec36";
+}
 .icon-planet2:before {
     content: "\ec95";
 }
 .icon-eye:before {
     content: "\ecae";
 }
+.icon-man:before {
+    content: "\ecfb";
+}
+.icon-woman:before {
+    content: "\ecfc";
+}
+.icon-male:before {
+    content: "\ecfe";
+}
+.icon-female:before {
+    content: "\ecff";
+}
+.icon-arrow-right2:before {
+    content: "\edbc";
+}
+.icon-arrow-left2:before {
+    content: "\edc4";
+}
+.icon-arrow-resize3:before {
+    content: "\edfd";
+}
+.icon-arrow-right16:before {
+    content: "\ee38";
+}
 .icon-github:before {
     content: "\ef0f";
 }
-.icon-cup:before {
-    content: "\ebc8";
-}
-
-@-moz-keyframes spin {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
-}
-@-webkit-keyframes spin {
-    from { -webkit-transform: rotate(0deg); }
-    to { -webkit-transform: rotate(360deg); }
-}
-@keyframes spin {
-    from {transform:rotate(0deg);}
-    to {transform:rotate(360deg);}
-}
-
-.spin {
-    -webkit-animation-name: spin;
-    -webkit-animation-duration: 4000ms;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
-    -moz-animation-name: spin;
-    -moz-animation-duration: 4000ms;
-    -moz-animation-iteration-count: infinite;
-    -moz-animation-timing-function: linear;
-    -ms-animation-name: spin;
-    -ms-animation-duration: 4000ms;
-    -ms-animation-iteration-count: infinite;
-    -ms-animation-timing-function: linear;
-
-    animation-name: spin;
-    animation-duration: 4000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-}
-
