@@ -4,12 +4,12 @@
  * GitHub: https://github.com/RevillWeb
  * Twitter: @RevillWeb
  */
-export class ResourceList extends HTMLElement {
+export class ResourcesList extends HTMLElement {
     createdCallback() {
         this.baseUrl = "http://swapi.co/api/";
         this.type = null;
         this.innerHTML = `
-            <data-loading></data-loading>
+            <rbl-loading id="loading" color="#ff6" background-color="#000"></rbl-loading>
             <h1 id="title"></h1>
             <ul class="resource-list">
                 <rbl-repeater id="list-row"></rbl-repeater>
@@ -17,18 +17,22 @@ export class ResourceList extends HTMLElement {
         `;
     }
     attachedCallback() {
+        this.querySelector(".resource-list").addEventListener("click", (event) => {
+            var url = event.target.dataset.url;
+            if(url.substr(-1) === '/') {
+                url = url.substr(0, url.length - 1);
+            }
+            var parts = url.split("/");
+            var id = parts[parts.length - 1];
+            window.location.hash = "/resource/" + this.type + "/" + id;
+        });
         this.render();
     }
     attributeChangedCallback(name) {
         switch (name) {
-            case "rbl-url-params":
-                try {
-                    var params = JSON.parse(this.getAttribute(name));
-                    this.type = params.resource || null;
-                    this.render();
-                } catch (e) {
-
-                }
+            case "resource":
+                this.type = this.getAttribute("resource");
+                this.render();
                 break;
         }
     }
@@ -58,7 +62,7 @@ export class ResourceList extends HTMLElement {
             let $title = this.querySelector("#title");
             $title.innerHTML = "<span class='icon " + this.getTypeIcon() + "'></span>" + this.type.charAt(0).toUpperCase() + this.type.slice(1);
             var xhr = new XMLHttpRequest();
-            const $loader = this.querySelector('data-loading');
+            const $loader = this.querySelector('#loading');
             $loader.show();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -67,8 +71,7 @@ export class ResourceList extends HTMLElement {
                         if (json.results !== undefined && json.results.length > 0) {
                             const $list = this.querySelector("#list-row");
                             if ($list !== null) {
-                                console.log("RESULTS:", json.results);
-                                $list.setTemplate('<li><a href="#">${name}</a></li>');
+                                $list.setTemplate('<li><a href="javascript:void(0)" class="resource-click" data-url="${url}">${name}</a></li>');
                                 $list.setContent(json.results);
                                 $loader.hide();
                             }

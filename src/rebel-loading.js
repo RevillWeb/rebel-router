@@ -4,22 +4,20 @@
  * GitHub: https://github.com/RevillWeb
  * Twitter: @RevillWeb
  */
-export class Loader extends HTMLElement {
+export class RblLoading extends HTMLElement {
     createdCallback() {
         this.createShadowRoot();
-        this.backgroundColor = "000";
-        this.color = "ff6";
-    }
-    attachedCallback() {
+        this.backgroundColor = this.getAttribute("background-color") || "#FFF";
+        this.color = this.getAttribute("color") || "#000";
         this.shadowRoot.innerHTML = `
             <style>
                 .loader {
                     position: absolute;
-                    background-color: #${this.backgroundColor};
+                    background-color: ${this.backgroundColor};
                     top: 0;
                     bottom: 0;
                     width: 100%;
-                    color: #${this.color};
+                    color: ${this.color};
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
@@ -33,7 +31,7 @@ export class Loader extends HTMLElement {
                     width: 40px;
                     height: 40px;
                     margin: 100px auto;
-                    background-color: #${this.color};
+                    background-color: ${this.color};
                     border-radius: 100%;
                     -webkit-animation: sk-scaleout 1.0s infinite ease-in-out;
                     animation: sk-scaleout 1.0s infinite ease-in-out;
@@ -58,7 +56,7 @@ export class Loader extends HTMLElement {
                     }
                 }
             </style>
-            <div class="loader">
+            <div class="loader hidden">
                 <div class="spinner"></div>
             </div>
         `;
@@ -71,4 +69,4 @@ export class Loader extends HTMLElement {
     }
 }
 
-document.registerElement('data-loading', Loader);
+document.registerElement('rbl-loading', RblLoading);

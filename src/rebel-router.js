@@ -60,7 +60,17 @@ class RouterTemplate extends HTMLTemplateElement {
                 this.root.appendChild(this.$template);
                 this.previousTemplate = result.templateName;
             }
-            this.$template.setAttribute("rbl-url-params", JSON.stringify(result.params));
+            for (let key in result.params) {
+                let value = result.params[key];
+                if (typeof value == "Object") {
+                    try {
+                        value = JSON.parse(value);
+                    } catch (e) {
+                        console.error("Couldn't parse param value:", e);
+                    }
+                }
+                this.$template.setAttribute(key, value);
+            }
         }
     }
     add(path, ViewClass) {
