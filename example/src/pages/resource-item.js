@@ -42,7 +42,6 @@ export class ResourceItem extends HTMLElement {
                         const json = JSON.parse(xhr.response);
                         $title.innerHTML = json.name;
                         this.data = json;
-                        console.log("RESOURCE DATA:", this.data);
                         if (this.renderChild !== null) {
                             this.renderChild();
                         }

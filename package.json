@@ -1,7 +1,7 @@
 {
   "name": "rebel-router",
-  "version": "0.1.1",
-  "description": "A lightweight JavaScript router written in ES2015 which supports nested routes and allows web components to be provided as pages.",
+  "version": "0.2.0",
+  "description": "A lightweight JavaScript router written for ultra-modern applications where web components are first class citizens",
   "license": "MIT",
   "repository": "https://github.com/RevillWeb/rebel-router.git",
   "main": "src/rebel-router.js",

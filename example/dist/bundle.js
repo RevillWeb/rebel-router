@@ -54,23 +54,29 @@
 
 	var _people = __webpack_require__(4);
 
-	var _starships = __webpack_require__(9);
+	var _starships = __webpack_require__(6);
 
-	var _info = __webpack_require__(6);
+	var _vehicles = __webpack_require__(10);
 
-	var _rebelRepeater = __webpack_require__(7);
+	var _species = __webpack_require__(11);
 
-	var _rebelLoading = __webpack_require__(8);
+	var _planets = __webpack_require__(12);
+
+	var _info = __webpack_require__(7);
+
+	var _rebelRepeater = __webpack_require__(8);
+
+	var _rebelLoading = __webpack_require__(9);
 
 	//Configure the main app router with the main resource list page and the info page.
-	/**
-	 * Created by Leon Revill on 03/03/16.
-	 * Blog: http://www.revilweb.com
-	 * GitHub: https://github.com/RevillWeb
-	 * Twitter: @RevillWeb
-	 */
-	var MainRouter = new _rebelRouter.RebelRouter("main-view");
-	MainRouter.add("/info", _info.InfoPage).add("/resources/{resource}", _resourceList.ResourcesList).add("/resource/people/{id}", _people.PeopleResource).add("/resource/starships/{id}", _starships.StarshipsResource).setDefault(_home.HomePage);
+	var MainRouter = new _rebelRouter.RebelRouter("main-view"); /**
+	                                                             * Created by Leon Revill on 03/03/16.
+	                                                             * Blog: http://www.revilweb.com
+	                                                             * GitHub: https://github.com/RevillWeb
+	                                                             * Twitter: @RevillWeb
+	                                                             */
+
+	MainRouter.add("/info", _info.InfoPage).add("/resources/{resource}", _resourceList.ResourcesList).add("/resource/people/{id}", _people.PeopleResource).add("/resource/starships/{id}", _starships.StarshipsResource).add("/resource/vehicles/{id}", _vehicles.VehiclesResource).add("/resource/species/{id}", _species.SpeciesResource).add("/resource/planets/{id}", _planets.PlanetsResource).setDefault(_home.HomePage);
 
 /***/ },
 /* 1 */
@@ -431,7 +437,7 @@
 	    _createClass(HomePage, [{
 	        key: "createdCallback",
 	        value: function createdCallback() {
-	            this.template = "<p>This is the home page.</p>";
+	            this.template = "<div class=\"home-container\">\n            <h2>REBEL ROUTER</h2>\n            <p>This simple demo application provides an example of Rebel Router in action, a router designed to make building ultra-modern web applications easy without the need for monolithic frameworks.</p>\n            <p>Simply make use of JavaScript modules and web components to easily write modular organised code that won't tie you in to a specific set of technologies.</p>\n            <h3>DEMO</h3>\n            <p>This demo makes use of the superb <a href=\"https://swapi.co/\" target=\"_blank\">Star Wars API</a> to provide a simple but real world use for the router. Navigate through the pages in the menu above and discover all kinds of things about the Star Wars universe you didn't know.</p>\n            <div class=\"controls\">\n                <a href=\"\" class=\"btn\"><span class=\"icon icon-github\"></span> Demo Source</a>\n                <a href=\"https://github.com/RevillWeb/rebel-router\" target=\"_blank\" class=\"btn\"><span class=\"icon icon-github\"></span> Rebel Router</a>\n            </div>\n        </div>";
 	        }
 	    }, {
 	        key: "attachedCallback",
@@ -752,7 +758,6 @@
 	                                var json = JSON.parse(xhr.response);
 	                                $title.innerHTML = json.name;
 	                                _this2.data = json;
-	                                console.log("RESOURCE DATA:", _this2.data);
 	                                if (_this2.renderChild !== null) {
 	                                    _this2.renderChild();
 	                                }
@@ -775,6 +780,62 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.StarshipsResource = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _resourceItem = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Leon Revill on 07/03/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Blog: http://www.revilweb.com
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * GitHub: https://github.com/RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Twitter: @RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var StarshipsResource = exports.StarshipsResource = function (_ResourceItem) {
+	    _inherits(StarshipsResource, _ResourceItem);
+
+	    function StarshipsResource() {
+	        _classCallCheck(this, StarshipsResource);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(StarshipsResource).apply(this, arguments));
+	    }
+
+	    _createClass(StarshipsResource, [{
+	        key: "attachedCallback",
+	        value: function attachedCallback() {
+	            var _this2 = this;
+
+	            this.type = "starships";
+	            this.renderChild = function () {
+	                _this2.$stats.innerHTML = StarshipsResource.renderTemplate(_this2.data);
+	            };
+	        }
+	    }], [{
+	        key: "renderTemplate",
+	        value: function renderTemplate(data) {
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-coins\"></span></label> <span>" + data.cost_in_credits + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-shield4\"></span></label> " + data.starship_class + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Length:</label> " + data.length + "</p>\n                    <span class=\"icon icon-rocket\"></span>\n                    <p><label>Cargo Capacity:</label> " + data.cargo_capacity + "</p>\n                    <p><label>Passengers:</label> " + data.passengers + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Model:</label> " + data.model + "</p>\n                    <p><label>Crew:</label> " + data.crew + "</p>\n                    <p><label>Hyperdrive Rating:</label> " + data.hyperdrive_rating + "</p>\n                    <p><label>Manufacturer:</label> <br />" + data.manufacturer + "</p>\n                </div>\n            </div>";
+	        }
+	    }]);
+
+	    return StarshipsResource;
+	}(_resourceItem.ResourceItem);
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -828,7 +889,7 @@
 	}(HTMLElement);
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -957,7 +1018,7 @@
 	document.registerElement("rbl-repeater", RblRepeater);
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1016,7 +1077,7 @@
 	document.registerElement('rbl-loading', RblLoading);
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1024,7 +1085,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.StarshipsResource = undefined;
+	exports.VehiclesResource = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1042,33 +1103,145 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 
-	var StarshipsResource = exports.StarshipsResource = function (_ResourceItem) {
-	    _inherits(StarshipsResource, _ResourceItem);
+	var VehiclesResource = exports.VehiclesResource = function (_ResourceItem) {
+	    _inherits(VehiclesResource, _ResourceItem);
 
-	    function StarshipsResource() {
-	        _classCallCheck(this, StarshipsResource);
+	    function VehiclesResource() {
+	        _classCallCheck(this, VehiclesResource);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(StarshipsResource).apply(this, arguments));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(VehiclesResource).apply(this, arguments));
 	    }
 
-	    _createClass(StarshipsResource, [{
+	    _createClass(VehiclesResource, [{
 	        key: "attachedCallback",
 	        value: function attachedCallback() {
 	            var _this2 = this;
 
-	            this.type = "starships";
+	            this.type = "vehicles";
 	            this.renderChild = function () {
-	                _this2.$stats.innerHTML = StarshipsResource.renderTemplate(_this2.data);
+	                _this2.$stats.innerHTML = VehiclesResource.renderTemplate(_this2.data);
 	            };
 	        }
 	    }], [{
 	        key: "renderTemplate",
 	        value: function renderTemplate(data) {
-	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-coins\"></span></label> <span>" + data.cost_in_credits + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-shield4\"></span></label> " + data.starship_class + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Length:</label> " + data.length + "</p>\n                    <span class=\"icon icon-rocket\"></span>\n                    <p><label>Cargo Capacity:</label> " + data.cargo_capacity + "</p>\n                    <p><label>Passengers:</label> " + data.passengers + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Model:</label> " + data.model + "</p>\n                    <p><label>Crew:</label> " + data.crew + "</p>\n                    <p><label>Hyperdrive Rating:</label> " + data.hyperdrive_rating + "</p>\n                    <p><label>Manufacturer:</label> <br />" + data.manufacturer + "</p>\n                </div>\n            </div>";
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-coins\"></span></label> <span>" + data.cost_in_credits + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-shield4\"></span></label> " + data.vehicle_class + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Length:</label> " + data.length + "</p>\n                    <span class=\"icon icon-truck\"></span>\n                    <p><label>Cargo Capacity:</label> " + data.cargo_capacity + "</p>\n                    <p><label>Passengers:</label> " + data.passengers + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Model:</label> " + data.model + "</p>\n                    <p><label>Crew:</label> " + data.crew + "</p>\n                    <p><label>Manufacturer:</label> <br />" + data.manufacturer + "</p>\n                </div>\n            </div>";
 	        }
 	    }]);
 
-	    return StarshipsResource;
+	    return VehiclesResource;
+	}(_resourceItem.ResourceItem);
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.SpeciesResource = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _resourceItem = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Leon Revill on 07/03/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Blog: http://www.revilweb.com
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * GitHub: https://github.com/RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Twitter: @RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var SpeciesResource = exports.SpeciesResource = function (_ResourceItem) {
+	    _inherits(SpeciesResource, _ResourceItem);
+
+	    function SpeciesResource() {
+	        _classCallCheck(this, SpeciesResource);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SpeciesResource).apply(this, arguments));
+	    }
+
+	    _createClass(SpeciesResource, [{
+	        key: "attachedCallback",
+	        value: function attachedCallback() {
+	            var _this2 = this;
+
+	            this.type = "species";
+	            this.renderChild = function () {
+	                _this2.$stats.innerHTML = SpeciesResource.renderTemplate(_this2.data);
+	            };
+	        }
+	    }], [{
+	        key: "renderTemplate",
+	        value: function renderTemplate(data) {
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-lips\"></span></label> <span>" + data.language + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-calendar5\"></span></label> " + data.average_lifespan + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Av. Height:</label> " + data.average_height + "</p>\n                    <span class=\"icon icon-man\"></span>\n                    <p><label>Classification:</label> " + data.classification + "</p>\n                </div>\n                <div class=\"section\">\n                    <p><label>Eye Colours:</label> " + data.eye_colors + "</p>\n                    <p><label>Hair Colours:</label> " + data.hair_colors + "</p>\n                    <p><label>Skin Colours:</label> " + data.skin_colors + "</p>\n                </div>\n            </div>";
+	        }
+	    }]);
+
+	    return SpeciesResource;
+	}(_resourceItem.ResourceItem);
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.PlanetsResource = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _resourceItem = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Leon Revill on 07/03/16.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Blog: http://www.revilweb.com
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * GitHub: https://github.com/RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Twitter: @RevillWeb
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var PlanetsResource = exports.PlanetsResource = function (_ResourceItem) {
+	    _inherits(PlanetsResource, _ResourceItem);
+
+	    function PlanetsResource() {
+	        _classCallCheck(this, PlanetsResource);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(PlanetsResource).apply(this, arguments));
+	    }
+
+	    _createClass(PlanetsResource, [{
+	        key: "attachedCallback",
+	        value: function attachedCallback() {
+	            var _this2 = this;
+
+	            this.type = "planets";
+	            this.renderChild = function () {
+	                _this2.$stats.innerHTML = PlanetsResource.renderTemplate(_this2.data);
+	            };
+	        }
+	    }], [{
+	        key: "renderTemplate",
+	        value: function renderTemplate(data) {
+	            return "\n            <div class=\"stats-section\">\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-arrow-down16\"></span></label> <span>" + data.gravity + "</span></p>\n                </div>\n                <div class=\"section\">\n                    <p><label><span class=\"icon icon-tree\"></span></label> " + data.terrain + "</p>\n                </div>\n            </div>\n            <div class=\"stats-section\">\n                <div class=\"section build\">\n                    <p><label>Diameter:</label> " + data.diameter + "</p>\n                    <span class=\"icon icon-planet2\"></span>\n                    <p><label>Climate:</label> " + data.climate + "</p>\n\n                </div>\n                <div class=\"section\">\n                <p><label>Population:</label> " + data.population + "</p>\n                    <p><label>Surface Water:</label> " + data.surface_water + "</p>\n                    <p><label>Orbital Period:</label> " + data.orbital_period + "</p>\n                    <p><label>Rotation Period:</label> " + data.rotation_period + "</p>\n                </div>\n            </div>";
+	        }
+	    }]);
+
+	    return PlanetsResource;
 	}(_resourceItem.ResourceItem);
 
 /***/ }

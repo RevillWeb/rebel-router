@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700);
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:300,400,700);
 html, body
 {
     width: 100%;
@@ -25,10 +25,17 @@ a:hover, a:active {
     flex-direction: column;
 }
 #main-header {
-    height: 60px;
+    /*height: 60px;*/
     padding: 0 10px;
     color: #ff6;
     font-size: 30px;
+}
+#main-header p {
+    font-size: 16px;
+    font-weight: 300;
+    color: #b0b048;
+    margin: 0;
+    padding: 10px 0 15px 0;
 }
 #main-header span.darker {
     color: #b0b048;
@@ -119,9 +126,11 @@ a:hover, a:active {
     -webkit-transition: background-color 200ms;
     -moz-transition: background-color 200ms;
     transition: background-color 200ms;
+    display: inline-block;
 }
 .btn:hover {
     background-color: #b0b048;
+    color: #333;
 }
 .btn.disabled, .btn.disabled:hover {
     background-color: #CCC;
@@ -131,7 +140,6 @@ a:hover, a:active {
     display: inline-block;
     margin-top: -1px;
 }
-
 /** RESOURCE LIST **/
 .resource-list {
     margin: 0;
@@ -207,6 +215,22 @@ a:hover, a:active {
     font-size: 80px;
 }
 
+/** HOME PAGE **/
+.home-container {
+    padding: 20px;
+}
+.home-container h2 {
+    margin: 0;
+    color: #ff6;
+}
+.home-container h3 {
+    color: #ff6;
+}
+.home-container .controls {
+    height: 50px;
+    text-align: center;
+    margin-top: 30px;
+}
 
 /* MEDIA QUERIES */
 @media (max-width:  1176px) {
