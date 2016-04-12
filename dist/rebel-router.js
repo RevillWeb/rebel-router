@@ -38,15 +38,31 @@ var RouterTemplate = (function (_HTMLTemplateElement) {
     }
 
     _createClass(RouterTemplate, [{
+        key: "init",
+        value: function init(config) {
+            this.initialised = false;
+            this.config = RebelRouter.mergeConfig({
+                "shadowRoot": false
+            }, config);
+        }
+    }, {
         key: "attachedCallback",
         value: function attachedCallback() {
             var _this2 = this;
 
-            this.createShadowRoot();
-            this.render();
-            RebelRouter.pathChange(function () {
-                _this2.render();
-            });
+            if (this.initialised === false) {
+                if (this.config.shadowRoot === true) {
+                    this.createShadowRoot();
+                    this.root = this.shadowRoot;
+                } else {
+                    this.root = this;
+                }
+                this.render();
+                RebelRouter.pathChange(function () {
+                    _this2.render();
+                });
+                this.initialised = true;
+            }
         }
     }, {
         key: "current",
@@ -67,12 +83,26 @@ var RouterTemplate = (function (_HTMLTemplateElement) {
     }, {
         key: "render",
         value: function render() {
-            this.shadowRoot.innerHTML = "";
             var result = this.current();
             if (result !== null) {
-                var $template = document.createElement(result.templateName);
-                $template.setAttribute("rbl-url-params", JSON.stringify(result.params));
-                this.shadowRoot.appendChild($template);
+                //let $template = null;
+                if (result.templateName !== this.previousTemplate) {
+                    this.root.innerHTML = "";
+                    this.$template = document.createElement(result.templateName);
+                    this.root.appendChild(this.$template);
+                    this.previousTemplate = result.templateName;
+                }
+                for (var key in result.params) {
+                    var value = result.params[key];
+                    if (typeof value == "Object") {
+                        try {
+                            value = JSON.parse(value);
+                        } catch (e) {
+                            console.error("Couldn't parse param value:", e);
+                        }
+                    }
+                    this.$template.setAttribute(key, value);
+                }
             }
         }
     }, {
@@ -112,14 +142,32 @@ var RebelRouter = exports.RebelRouter = (function () {
             throw new Error("Invalid tag name provided.");
         }
         if (RebelRouter.isRegisteredElement(name) === false) {
-            var tag = document.registerElement(name, RouterTemplate);
+            var tag = document.registerElement(name, {
+                prototype: Object.create(RouterTemplate.prototype)
+            });
             var instance = new tag();
+            instance.init(config);
             RebelRouter.addView(name, instance);
-            return instance;
         }
+        return RebelRouter.getView(name);
     }
 
     _createClass(RebelRouter, null, [{
+        key: "mergeConfig",
+        value: function mergeConfig(defaults, config) {
+            if (config === undefined) {
+                return defaults;
+            }
+            var result = {};
+            for (var attrName in defaults) {
+                result[attrName] = defaults[attrName];
+            }
+            for (var attrName in config) {
+                result[attrName] = config[attrName];
+            }
+            return result;
+        }
+    }, {
         key: "addView",
         value: function addView(name, classInstance) {
             if (RebelRouter._views === undefined) {
@@ -177,6 +225,7 @@ var RebelRouter = exports.RebelRouter = (function () {
         value: function create(Class) {
             var name = RebelRouter.classToTag(Class);
             if (RebelRouter.isRegisteredElement(name) === false) {
+                Class.prototype.name = name;
                 document.registerElement(name, Class);
             }
             return name;
@@ -195,24 +244,16 @@ var RebelRouter = exports.RebelRouter = (function () {
             }
             RebelRouter.changeCallbacks.push(callback);
             var changeHandler = function changeHandler(event) {
-                console.log("EVENT:", event);
-                if (event.newURL != event.oldURL) {
+                if (event.oldURL !== undefined && event.newURL != event.oldURL || event.detail !== undefined && event.detail.path !== undefined) {
+                    var data = event.detail;
                     RebelRouter.changeCallbacks.forEach(function (callback) {
-                        callback();
+                        callback(data);
                     });
                 }
             };
             window.onhashchange = changeHandler;
             window.onpopstate = changeHandler;
             window.addEventListener("pushstate", changeHandler);
-        }
-    }, {
-        key: "getPathFromUrl",
-        value: function getPathFromUrl() {
-            var result = window.location.href.match(/#(.*)$/);
-            if (result !== null) {
-                return result[1];
-            }
         }
     }, {
         key: "getParamsFromUrl",
@@ -231,6 +272,14 @@ var RebelRouter = exports.RebelRouter = (function () {
                 });
             }
             return result;
+        }
+    }, {
+        key: "getPathFromUrl",
+        value: function getPathFromUrl() {
+            var result = window.location.href.match(/#(.*)$/);
+            if (result !== null) {
+                return result[1];
+            }
         }
     }]);
 
@@ -266,34 +315,3 @@ var RebelView = (function (_HTMLTemplateElement2) {
 })(HTMLTemplateElement);
 
 document.registerElement("rebel-view", RebelView);
-
-var RebelHistory = (function (_HTMLAnchorElement) {
-    _inherits(RebelHistory, _HTMLAnchorElement);
-
-    function RebelHistory() {
-        _classCallCheck(this, RebelHistory);
-
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelHistory).apply(this, arguments));
-    }
-
-    _createClass(RebelHistory, [{
-        key: "attachedCallback",
-        value: function attachedCallback() {
-            this.addEventListener("click", function (event) {
-                event.preventDefault();
-                var path = this.getAttribute("href");
-                if (path !== undefined) {
-                    var target = this.getAttribute("target");
-                    window.dispatchEvent(new CustomEvent('pushstate', { "detail": { "path": path, "target": target } }));
-                }
-            });
-        }
-    }]);
-
-    return RebelHistory;
-})(HTMLAnchorElement);
-
-document.registerElement("rebel-history", {
-    extends: "a",
-    prototype: RebelHistory.prototype
-});
