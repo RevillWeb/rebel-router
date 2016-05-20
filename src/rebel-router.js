@@ -5,6 +5,13 @@
  * Twitter: @RevillWeb
  */
 
+//Custom shim for Safari
+if (typeof HTMLElement !== 'function') {
+    var _HTMLElement = function(){};
+    _HTMLElement.prototype = HTMLElement.prototype;
+    HTMLElement = _HTMLElement;
+}
+
 function _routeResult(templateName, route, regex, path) {
     let result = {};
     result.templateName = templateName;
@@ -18,8 +25,41 @@ class RouterTemplate extends HTMLTemplateElement {
     init(config) {
         this.initialised = false;
         this.config = RebelRouter.mergeConfig({
-            "shadowRoot": false
+            "shadowRoot": false,
+            "animation": false
         }, config);
+    }
+    initAnimation() {
+        if (this.config.animation === true) {
+            const observer = new MutationObserver((mutations) => {
+                let node = mutations[0].addedNodes[0];
+                if (node !== undefined) {
+                    const otherChildren = this.getOtherChildren(node);
+                    node.className += " rebel-animate enter";
+                    setTimeout(() => {
+                        if (otherChildren.length > 0) {
+                            otherChildren.forEach((child) => {
+                                child.className += " exit";
+                                setTimeout(() => {
+                                    child.className += " complete";
+                                }, 10);
+                            });
+                        }
+                        setTimeout(() => {
+                            node.className += " complete";
+                        }, 10);
+                    }, 10);
+                    const animationEnd = (event) => {
+                        if (event.target.className.indexOf("exit") > -1) {
+                            this.root.removeChild(event.target);
+                        }
+                    };
+                    node.addEventListener("transitionend", animationEnd);
+                    node.addEventListener("animationend", animationEnd);
+                }
+            });
+            observer.observe(this, {childList: true});
+        }
     }
     attachedCallback() {
         if (this.initialised === false) {
@@ -29,8 +69,17 @@ class RouterTemplate extends HTMLTemplateElement {
             } else {
                 this.root = this;
             }
+            this.initAnimation();
             this.render();
-            RebelRouter.pathChange(() => {
+            RebelRouter.pathChange((isBack) => {
+                if (this.config.animation === true) {
+                    if (isBack === true) {
+                        this.className = this.className.replace(" rbl-back", "");
+                        this.className += " rbl-back";
+                    } else {
+                        this.className = this.className.replace(" rbl-back", "");
+                    }
+                }
                 this.render();
             });
             this.initialised = true;
@@ -53,10 +102,11 @@ class RouterTemplate extends HTMLTemplateElement {
     render() {
         const result = this.current();
         if (result !== null) {
-            //let $template = null;
-            if (result.templateName !== this.previousTemplate) {
-                this.root.innerHTML = "";
+            if (result.templateName !== this.previousTemplate || this.config.animation === true) {
                 this.$template = document.createElement(result.templateName);
+                if (this.config.animation !== true) {
+                    this.root.innerHTML = "";
+                }
                 this.root.appendChild(this.$template);
                 this.previousTemplate = result.templateName;
             }
@@ -90,10 +140,22 @@ class RouterTemplate extends HTMLTemplateElement {
     setDefault(ViewClass) {
         return this.add("*", ViewClass);
     }
+    getOtherChildren(node) {
+        const children = this.root.children;
+        let results = [];
+        for (let i = 0; i < children.length; i++) {
+            let child = children[i];
+            if (child != node) {
+                results.push(child);
+            }
+        }
+        return results;
+    };
 }
 
 export class RebelRouter {
     constructor(name, config) {
+        this.stack = [];
         this.template = null;
         if (RebelRouter.validElementTag(name) === false) {
             throw new Error("Invalid tag name provided.");
@@ -179,16 +241,20 @@ export class RebelRouter {
         }
         RebelRouter.changeCallbacks.push(callback);
         const changeHandler = (event) => {
-            if ((event.oldURL !== undefined && event.newURL != event.oldURL) || (event.detail !== undefined && event.detail.path !== undefined)) {
-                var data = event.detail;
+            if (event.oldURL !== undefined && event.newURL != event.oldURL) {
                 RebelRouter.changeCallbacks.forEach(function(callback){
-                    callback(data);
+                    callback(RebelRouter.isBack);
                 });
+                RebelRouter.isBack = false;
             }
         };
+        if (window.onhashchange === null) {
+            window.addEventListener("rblback", function(){
+                RebelRouter.isBack = true;
+            });
+        }
         window.onhashchange = changeHandler;
         window.onpopstate = changeHandler;
-        window.addEventListener("pushstate", changeHandler);
     }
     static getParamsFromUrl(regex, route, path) {
         var result = RebelRouter.parseQueryString(path);
@@ -229,3 +295,20 @@ class RebelView extends HTMLTemplateElement {
     }
 }
 document.registerElement("rebel-view", RebelView);
+
+class RebelBackA extends HTMLAnchorElement {
+    attachedCallback() {
+        this.addEventListener("click", (event) => {
+            const path = this.getAttribute("href");
+            event.preventDefault();
+            if (path !== undefined) {
+                window.dispatchEvent(new CustomEvent('rblback'));
+            }
+            window.location.hash = path;
+        });
+    }
+}
+document.registerElement("rebel-back-a", {
+    extends: "a",
+    prototype: RebelBackA.prototype
+});
