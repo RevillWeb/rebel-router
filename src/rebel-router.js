@@ -1,17 +1,19 @@
 /**
  * Created by Leon Revill on 15/12/2015.
- * Blog: http://www.jsinsights.com
+ * Blog: blog.revillweb.com
  * GitHub: https://github.com/RevillWeb
  * Twitter: @RevillWeb
  */
 
-//Custom shim for Safari
-if (typeof HTMLElement !== 'function') {
-    var _HTMLElement = function(){};
-    _HTMLElement.prototype = HTMLElement.prototype;
-    HTMLElement = _HTMLElement;
-}
-
+/**
+ * Constructs a route object
+ * @param templateName
+ * @param route
+ * @param regex
+ * @param path
+ * @returns {{}}
+ * @private
+ */
 function _routeResult(templateName, route, regex, path) {
     let result = {};
     result.templateName = templateName;
@@ -21,7 +23,14 @@ function _routeResult(templateName, route, regex, path) {
     return result;
 }
 
-class RouterTemplate extends HTMLTemplateElement {
+/**
+ * Represents a router template which is used as the prototype for each RebelRouter element registered.
+ */
+class RouterTemplate extends HTMLElement {
+    /**
+     * Initialisation method with some basic configuration.
+     * @param config
+     */
     init(config) {
         this.initialised = false;
         this.config = RebelRouter.mergeConfig({
@@ -29,6 +38,10 @@ class RouterTemplate extends HTMLTemplateElement {
             "animation": false
         }, config);
     }
+
+    /**
+     * Function used to initialise the animation mechanics if animation is turned on
+     */
     initAnimation() {
         if (this.config.animation === true) {
             const observer = new MutationObserver((mutations) => {
@@ -61,6 +74,10 @@ class RouterTemplate extends HTMLTemplateElement {
             observer.observe(this, {childList: true});
         }
     }
+
+    /**
+     * Executed when the element has been added to the DOM, renders the templates and sets up the path change listener
+     */
     attachedCallback() {
         if (this.initialised === false) {
             if (this.config.shadowRoot === true) {
@@ -85,6 +102,11 @@ class RouterTemplate extends HTMLTemplateElement {
             this.initialised = true;
         }
     }
+
+    /**
+     * Method used to get the current route object
+     * @returns {*}
+     */
     current() {
         const path = RebelRouter.getPathFromUrl();
         for (const route in this.paths) {
@@ -99,6 +121,10 @@ class RouterTemplate extends HTMLTemplateElement {
         }
         return (this.paths["*"] !== undefined) ? _routeResult(this.paths["*"], "*", null, path) : null;
     }
+
+    /**
+     * Method called to render the current view
+     */
     render() {
         const result = this.current();
         if (result !== null) {
@@ -123,6 +149,13 @@ class RouterTemplate extends HTMLTemplateElement {
             }
         }
     }
+
+    /**
+     * Method used to add new paths to the router
+     * @param path - The route path
+     * @param ViewClass - The web component representing the view assoicated to the path
+     * @returns {RouterTemplate}
+     */
     add(path, ViewClass) {
         if (this.paths === undefined) {
             this.paths = {};
@@ -137,9 +170,21 @@ class RouterTemplate extends HTMLTemplateElement {
         }
         return this;
     }
+
+    /**
+     * Short had way of adding a new default/fallback route
+     * @param ViewClass
+     * @returns {RouterTemplate}
+     */
     setDefault(ViewClass) {
         return this.add("*", ViewClass);
     }
+
+    /**
+     *
+     * @param node - Used with the animation mechanics to get all other view children except itself
+     * @returns {Array}
+     */
     getOtherChildren(node) {
         const children = this.root.children;
         let results = [];
@@ -153,7 +198,16 @@ class RouterTemplate extends HTMLTemplateElement {
     };
 }
 
+/**
+ * The main router class and entry point to the router.
+ */
 export class RebelRouter {
+    /**
+     * Constructor for a new router.
+     * @param name - The name of the router, must be a valid element name (e.g. main-router)
+     * @param config - Configuration object for the router
+     * @returns {*} - Returns the view instance
+     */
     constructor(name, config) {
         this.stack = [];
         this.template = null;
@@ -170,6 +224,13 @@ export class RebelRouter {
         }
         return RebelRouter.getView(name);
     }
+
+    /**
+     * Static helper method used to merge two configuration objects.
+     * @param defaults
+     * @param config
+     * @returns {*}
+     */
     static mergeConfig(defaults, config) {
         if (config === undefined) {
             return defaults;
@@ -179,15 +240,33 @@ export class RebelRouter {
         for (var attrName in config) { result[attrName] = config[attrName]; }
         return result;
     }
+
+    /**
+     * Static method to add a new view to the router.
+     * @param name
+     * @param classInstance
+     */
     static addView(name, classInstance) {
         if (RebelRouter._views === undefined) {
             RebelRouter._views = {};
         }
         RebelRouter._views[name] = classInstance;
     }
+
+    /**
+     * Static method to get a view instance by name.
+     * @param name
+     * @returns {*}
+     */
     static getView(name) {
         return (RebelRouter._views !== undefined) ? RebelRouter._views[name] : undefined;
     }
+
+    /**
+     * Static helper method to parse the query string from a url into an object.
+     * @param url
+     * @returns {{}}
+     */
     static parseQueryString(url) {
         var result = {};
         if (url !== undefined) {
@@ -214,6 +293,12 @@ export class RebelRouter {
         }
         return result;
     }
+
+    /**
+     * Static helper method to convert a class name to a valid element name.
+     * @param Class
+     * @returns {string}
+     */
     static classToTag(Class) {
         var name = Class.name.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
         if (RebelRouter.validElementTag(name) === false) {
@@ -221,9 +306,21 @@ export class RebelRouter {
         }
         return name;
     }
+
+    /**
+     * Static helper method used to determine if an element with the specified name has already been registered.
+     * @param name
+     * @returns {boolean}
+     */
     static isRegisteredElement(name) {
         return document.createElement(name).constructor !== HTMLElement;
     }
+
+    /**
+     * Static helper method to take a web component class, create an element name and register the new element on the document.
+     * @param Class
+     * @returns {string}
+     */
     static create(Class) {
         const name = RebelRouter.classToTag(Class);
         if (RebelRouter.isRegisteredElement(name) === false) {
@@ -232,9 +329,20 @@ export class RebelRouter {
         }
         return name;
     }
+
+    /**
+     * Simple static helper method containing a regular expression to validate an element name
+     * @param tag
+     * @returns {boolean}
+     */
     static validElementTag(tag) {
         return /^[a-z0-9\-]+$/.test(tag);
     }
+
+    /**
+     * Method used to register a callback to be called when the URL path changes.
+     * @param callback
+     */
     static pathChange(callback) {
         if (RebelRouter.changeCallbacks === undefined) {
             RebelRouter.changeCallbacks = [];
@@ -256,6 +364,14 @@ export class RebelRouter {
         window.onhashchange = changeHandler;
         window.onpopstate = changeHandler;
     }
+
+    /**
+     * Static helper method used to get the parameters from the provided route.
+     * @param regex
+     * @param route
+     * @param path
+     * @returns {{}}
+     */
     static getParamsFromUrl(regex, route, path) {
         var result = RebelRouter.parseQueryString(path);
         var re = /{(\w+)}/g;
@@ -272,6 +388,11 @@ export class RebelRouter {
         }
         return result;
     }
+
+    /**
+     * Static helper method used to get the path from the current URL.
+     * @returns {*}
+     */
     static getPathFromUrl() {
         var result = window.location.href.match(/#(.*)$/);
         if (result !== null) {
@@ -280,7 +401,13 @@ export class RebelRouter {
     }
 }
 
-class RebelView extends HTMLTemplateElement {
+/**
+ * Represents a view element used to embed a router in the DOM
+ */
+class RebelView extends HTMLElement {
+    /**
+     * Called when the element is added to the DOM.
+     */
     attachedCallback() {
         //Get the name attribute from this element
         var name = this.getAttribute("name");
@@ -296,6 +423,9 @@ class RebelView extends HTMLTemplateElement {
 }
 document.registerElement("rebel-view", RebelView);
 
+/**
+ * Represents the prototype for an anchor element which added functionality to perform a back transition.
+ */
 class RebelBackA extends HTMLAnchorElement {
     attachedCallback() {
         this.addEventListener("click", (event) => {
