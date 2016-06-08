@@ -33,7 +33,7 @@ Rebel-router is designed to be used when building applications using the latest 
 
 2. Create your views using ES2015 classes
 
-```
+```javascript
 #home.js
 export class HomePage extends HTMLElement {
     createdCallback() {
