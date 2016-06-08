@@ -48,7 +48,7 @@ export class HomePage extends HTMLElement {
 }
 ```
 
-```
+```javascript
 #about.js
 export class AboutPage extends HTMLElement {
     createdCallback() {
@@ -65,7 +65,7 @@ export class AboutPage extends HTMLElement {
 
 3. Import your views into your main application file
 
-```
+```javascript
 #app.js
 import {HomePage} from './home.js';
 import {AboutPage} from './about.js';
@@ -73,7 +73,7 @@ import {AboutPage} from './about.js';
 
 4. Create a router instance and configure routes
 
-```
+```javascript
 let MainRouter = new RebelRouter("main-view", {animation: true});
 MainRouter.add("/about", AboutPage).setDefault(HomePage);
 ```
