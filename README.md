@@ -29,11 +29,11 @@ Rebel-router is designed to be used when building applications using the latest 
 
 1. Install rebel-router into your project from npm
 
-` npm install rebel-router `
+``` npm install rebel-router ```
 
 2. Create your views using ES2015 classes
 
-`
+```
 #home.js
 export class HomePage extends HTMLElement {
     createdCallback() {
@@ -46,9 +46,9 @@ export class HomePage extends HTMLElement {
         this.innerHTML = this.template;
     }
 }
-`
+```
 
-`
+```
 #about.js
 export class AboutPage extends HTMLElement {
     createdCallback() {
@@ -61,19 +61,19 @@ export class AboutPage extends HTMLElement {
         this.innerHTML = this.template;
     }
 }
-`
+```
 
 3. Import your views into your main application file
 
-`
+```
 #app.js
 import {HomePage} from './home.js';
 import {AboutPage} from './about.js';
-`
+```
 
 4. Create a router instance and configure routes
 
-`
+```
 let MainRouter = new RebelRouter("main-view", {animation: true});
 MainRouter.add("/about", AboutPage).setDefault(HomePage);
-`
+```
