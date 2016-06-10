@@ -34,8 +34,6 @@ var RebelRouter = exports.RebelRouter = (function () {
     function RebelRouter(name, config) {
         _classCallCheck(this, RebelRouter);
 
-        this.stack = [];
-        this.template = null;
         if (RebelRouter.validElementTag(name) === false) {
             throw new Error("Invalid tag name provided.");
         }
@@ -47,7 +45,7 @@ var RebelRouter = exports.RebelRouter = (function () {
             instance.init(config);
             RebelRouter.addView(name, instance);
         }
-        return RebelRouter.getTemplate(name);
+        return RebelRouter.getView(name);
     }
 
     /**
@@ -82,10 +80,10 @@ var RebelRouter = exports.RebelRouter = (function () {
     }, {
         key: "addView",
         value: function addView(name, classInstance) {
-            if (RebelRouter._templates === undefined) {
-                RebelRouter._templates = {};
+            if (RebelRouter._views === undefined) {
+                RebelRouter._views = {};
             }
-            RebelRouter._templates[name] = classInstance;
+            RebelRouter._views[name] = classInstance;
         }
 
         /**
@@ -95,9 +93,9 @@ var RebelRouter = exports.RebelRouter = (function () {
          */
 
     }, {
-        key: "getTemplate",
-        value: function getTemplate(name) {
-            return RebelRouter._templates !== undefined ? RebelRouter._templates[name] : undefined;
+        key: "getView",
+        value: function getView(name) {
+            return RebelRouter._views !== undefined ? RebelRouter._views[name] : undefined;
         }
 
         /**
@@ -495,16 +493,16 @@ var RouterTemplate = (function (_HTMLElement) {
  * Represents a view element used to embed a router in the DOM
  */
 
-var RebelView = (function (_HTMLElement2) {
-    _inherits(RebelView, _HTMLElement2);
+var RebelRouterInstance = (function (_HTMLElement2) {
+    _inherits(RebelRouterInstance, _HTMLElement2);
 
-    function RebelView() {
-        _classCallCheck(this, RebelView);
+    function RebelRouterInstance() {
+        _classCallCheck(this, RebelRouterInstance);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelView).apply(this, arguments));
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelRouterInstance).apply(this, arguments));
     }
 
-    _createClass(RebelView, [{
+    _createClass(RebelRouterInstance, [{
         key: "attachedCallback",
 
         /**
@@ -515,7 +513,7 @@ var RebelView = (function (_HTMLElement2) {
             var name = this.getAttribute("name");
             //If its not undefined then attempt to find a router instance with a matching name
             if (name !== undefined) {
-                var instance = RebelRouter.getTemplate(name);
+                var instance = RebelRouter.getView(name);
                 //If an instance exists with that name append it to this element
                 if (instance !== undefined) {
                     this.appendChild(instance);
@@ -524,10 +522,10 @@ var RebelView = (function (_HTMLElement2) {
         }
     }]);
 
-    return RebelView;
+    return RebelRouterInstance;
 })(HTMLElement);
 
-document.registerElement("rebel-view", RebelView);
+document.registerElement("rebel-router", RebelRouterInstance);
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.

@@ -16,8 +16,6 @@ export class RebelRouter {
      * @returns {*} - Returns the view instance
      */
     constructor(name, config) {
-        this.stack = [];
-        this.template = null;
         if (RebelRouter.validElementTag(name) === false) {
             throw new Error("Invalid tag name provided.");
         }
@@ -29,7 +27,7 @@ export class RebelRouter {
             instance.init(config);
             RebelRouter.addView(name, instance);
         }
-        return RebelRouter.getTemplate(name);
+        return RebelRouter.getView(name);
     }
 
     /**
@@ -54,10 +52,10 @@ export class RebelRouter {
      * @param classInstance
      */
     static addView(name, classInstance) {
-        if (RebelRouter._templates === undefined) {
-            RebelRouter._templates = {};
+        if (RebelRouter._views === undefined) {
+            RebelRouter._views = {};
         }
-        RebelRouter._templates[name] = classInstance;
+        RebelRouter._views[name] = classInstance;
     }
 
     /**
@@ -65,8 +63,8 @@ export class RebelRouter {
      * @param name
      * @returns {*}
      */
-    static getTemplate(name) {
-        return (RebelRouter._templates !== undefined) ? RebelRouter._templates[name] : undefined;
+    static getView(name) {
+        return (RebelRouter._views !== undefined) ? RebelRouter._views[name] : undefined;
     }
 
     /**
@@ -393,7 +391,7 @@ class RouterTemplate extends HTMLElement {
 /**
  * Represents a view element used to embed a router in the DOM
  */
-class RebelView extends HTMLElement {
+class RebelRouterInstance extends HTMLElement {
     /**
      * Called when the element is added to the DOM.
      */
@@ -402,7 +400,7 @@ class RebelView extends HTMLElement {
         var name = this.getAttribute("name");
         //If its not undefined then attempt to find a router instance with a matching name
         if (name !== undefined) {
-            var instance = RebelRouter.getTemplate(name);
+            var instance = RebelRouter.getView(name);
             //If an instance exists with that name append it to this element
             if (instance !== undefined) {
                 this.appendChild(instance);
@@ -410,7 +408,7 @@ class RebelView extends HTMLElement {
         }
     }
 }
-document.registerElement("rebel-view", RebelView);
+document.registerElement("rebel-router", RebelRouterInstance);
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
