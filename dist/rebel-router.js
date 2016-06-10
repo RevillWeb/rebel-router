@@ -208,13 +208,17 @@ var RebelRouter = exports.RebelRouter = (function () {
                 RebelRouter.changeCallbacks = [];
             }
             RebelRouter.changeCallbacks.push(callback);
-            var changeHandler = function changeHandler(event) {
-                if (event.oldURL !== undefined && event.newURL != event.oldURL) {
+            var changeHandler = function changeHandler() {
+                /**
+                 *  event.oldURL and event.newURL would be better here but this doesn't work in IE :(
+                 */
+                if (window.location.href != RebelRouter.oldURL) {
                     RebelRouter.changeCallbacks.forEach(function (callback) {
                         callback(RebelRouter.isBack);
                     });
                     RebelRouter.isBack = false;
                 }
+                RebelRouter.oldURL = window.location.href;
             };
             if (window.onhashchange === null) {
                 window.addEventListener("rblback", function () {
@@ -222,7 +226,6 @@ var RebelRouter = exports.RebelRouter = (function () {
                 });
             }
             window.onhashchange = changeHandler;
-            window.onpopstate = changeHandler;
         }
 
         /**

@@ -160,13 +160,17 @@ export class RebelRouter {
             RebelRouter.changeCallbacks = [];
         }
         RebelRouter.changeCallbacks.push(callback);
-        const changeHandler = (event) => {
-            if (event.oldURL !== undefined && event.newURL != event.oldURL) {
+        const changeHandler = () => {
+            /**
+             *  event.oldURL and event.newURL would be better here but this doesn't work in IE :(
+             */
+            if (window.location.href != RebelRouter.oldURL) {
                 RebelRouter.changeCallbacks.forEach(function(callback){
                     callback(RebelRouter.isBack);
                 });
                 RebelRouter.isBack = false;
             }
+            RebelRouter.oldURL = window.location.href;
         };
         if (window.onhashchange === null) {
             window.addEventListener("rblback", function(){
@@ -174,7 +178,6 @@ export class RebelRouter {
             });
         }
         window.onhashchange = changeHandler;
-        window.onpopstate = changeHandler;
     }
 
     /**
