@@ -1,12 +1,8 @@
 #rebel-router
 
-A lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens.
+A lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens. Rebel-router is designed to make building modern applications using ES2015 and beyond easier while not tying you into a specific framework or technology stack. Rebel-router allows you to write web components to represent your views so you can make full use of the view controller pattern based on nothing more than browser standards.
 
-#What?
-
-Rebel-router is a JavaScript router written using the latest version of JavaScript aimed at making building ultra-modern web applications using modules, classes and web components easier.
-
-[REBEL-ROTUER DEMO](http://revillweb.github.io/rebel-router-demo/)
+[<img src="http://i.imgur.com/L1gWpAi.png" />](http://revillweb.github.io/rebel-router-demo/)
 
 ##Features
 
