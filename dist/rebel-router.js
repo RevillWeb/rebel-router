@@ -142,7 +142,14 @@ var RebelRouter = exports.RebelRouter = (function () {
     }, {
         key: "classToTag",
         value: function classToTag(Class) {
-            var name = Class.name.replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
+            /**
+             * Class.name would be better but this isn't supported in IE 11.
+             */
+            try {
+                var name = Class.toString().match(/^function\s*([^\s(]+)/)[1].replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
+            } catch (e) {
+                throw new Error("Couldn't parse class name:", e);
+            }
             if (RebelRouter.validElementTag(name) === false) {
                 throw new Error("Class name couldn't be translated to tag.");
             }
