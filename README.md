@@ -89,3 +89,8 @@ MainRouter.add("/about", AboutPage).setDefault(HomePage);
 ```
 
 A complete tutorial on how to build applications with rebel-router can be found [here](http://blog.revillweb.com/).
+
+#To Do
+
+* History API Support - I've not found any real need for this yet and it creates an extra level of friction due to the requirement of server side configuration. But this router is aimed at ultra-modern applications so it should be implemented at some point
+* Intercept transition - A nice feature of many routers is the ability to do work and resolve when finished before a route transition completes allowing you to set-up data from the next page
