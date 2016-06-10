@@ -18,12 +18,16 @@ Rebel-router is a JavaScript router written using the latest version of JavaScri
 
 ##Platform Support
 
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Latest* ✔ | Latest ✔ | Latest ✔ | IE 11 ✔ | Latest ✔ | Latest* ✔ |
+*Includes both Mobile & Desktop versions with `webcomponents.js` polyfill.
 
 #Why?
 
 The latest features of JavaScript (ES2015-17) provide solutions to problems web developers have been struggling with for years. This includes native support for modules, true encapsulation with web components and a reliance on monolithic frameworks to really build anything scalable. Rebel-router allows the developer to write web components which represent views and provides an easy way to tie these views to a URL path with easy access to any parameters. This provides some flexible structure in writing vanilla JavaScript applications without frameworks.
 
-#Getting started
+#Usage
 
 Rebel-router is designed to be used when building applications using the latest version of JavaScript, not while using ES5.
 
@@ -31,7 +35,7 @@ Rebel-router is designed to be used when building applications using the latest 
 
 ``` npm install rebel-router ```
 
-2. Create your views using ES2015 classes
+2. Create your views as web components
 
 ```javascript
 #home.js
@@ -77,3 +81,11 @@ import {AboutPage} from './about.js';
 let MainRouter = new RebelRouter("main-view", {animation: true});
 MainRouter.add("/about", AboutPage).setDefault(HomePage);
 ```
+
+5. Add your view to your document
+
+```html
+    <rebel-view name="main-view"></rebel-view>
+```
+
+A complete tutorial on how to build applications with rebel-router can be found here.
