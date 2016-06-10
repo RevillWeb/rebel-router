@@ -98,7 +98,7 @@ MainRouter.add("/about", AboutPage).setDefault(HomePage);
     <rebel-router name="main-router"></rebel-router>
 ```
 
-A complete tutorial on how to build applications with rebel-router can be found [here](http://blog.revillweb.com/).
+A complete tutorial on how to build applications with rebel-router can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
 
 #To Do
 
