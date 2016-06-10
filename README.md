@@ -78,14 +78,14 @@ import {AboutPage} from './about.js';
 4. Create a router instance and configure routes
 
 ```javascript
-let MainRouter = new RebelRouter("main-view", {animation: true});
+let MainRouter = new RebelRouter("main-router");
 MainRouter.add("/about", AboutPage).setDefault(HomePage);
 ```
 
 5. Add your view to your document
 
 ```html
-    <rebel-view name="main-view"></rebel-view>
+    <rebel-router name="main-router"></rebel-router>
 ```
 
 A complete tutorial on how to build applications with rebel-router can be found [here](http://blog.revillweb.com/).
