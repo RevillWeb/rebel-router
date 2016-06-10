@@ -18,10 +18,12 @@ Rebel-router is a JavaScript router written using the latest version of JavaScri
 
 ##Platform Support
 
+While some browsers do not support the full specification for web components you will need to include the [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) pollyfill.
+
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Latest* ✔ | Latest ✔ | Latest ✔ | IE 11 ✔ | Latest ✔ | Latest* ✔ |
-*Includes both Mobile & Desktop versions with `webcomponents.js` polyfill.
+*Includes both Mobile & Desktop versions.
 
 #Why?
 
@@ -29,7 +31,7 @@ The latest features of JavaScript (ES2015-17) provide solutions to problems web 
 
 #Usage
 
-Rebel-router is designed to be used when building applications using the latest version of JavaScript, not while using ES5.
+Rebel-router is designed to be used when building applications using the latest version of JavaScript and will need transpiling down to ES5 using [babel](https://babeljs.io/) or similar.
 
 1. Install rebel-router into your project from npm
 
@@ -88,4 +90,4 @@ MainRouter.add("/about", AboutPage).setDefault(HomePage);
     <rebel-view name="main-view"></rebel-view>
 ```
 
-A complete tutorial on how to build applications with rebel-router can be found here.
+A complete tutorial on how to build applications with rebel-router can be found [here](http://blog.revillweb.com/).
