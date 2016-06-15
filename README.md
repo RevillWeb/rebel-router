@@ -111,7 +111,11 @@ A complete tutorial on how to build applications with rebel-router can be found 
 
 #Usage
 
+This section of the document full details the API for rebel-router.
+
 ##Methods
+
+There is currently only one method available as part of rebel-router which is used to create new instances of a router.
 
 ###RebelRouter.create(name, routes, options)
 
