@@ -142,7 +142,7 @@ An object containing all the routes and associated view classes where the key is
 }
 ```
 
-3 **options**
+3. **options**
 
 An object containing option configuration options for the router instance.
 
