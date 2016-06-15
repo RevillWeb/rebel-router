@@ -37,7 +37,7 @@ While some browsers do not support the full specification for web components you
 
 The latest features of JavaScript (ES2015-17) provide solutions to problems web developers have been struggling with for years. This includes native support for modules, true encapsulation with web components and a reliance on monolithic frameworks to really build anything scalable. Rebel-router allows the developer to write web components which represent views and provides an easy way to tie these views to a URL path with easy access to any parameters. This provides some flexible structure in writing vanilla JavaScript applications without frameworks.
 
-#Usage
+#Getting started
 
 Rebel-router is designed to be used when building applications using the latest version of JavaScript and will need transpiling down to ES5 using [babel](https://babeljs.io/) or similar.
 
@@ -85,11 +85,20 @@ import {HomePage} from './home.js';
 import {AboutPage} from './about.js';
 ```
 
-4. Create a router instance and configure routes
+4. Create a router instance, configure routes and specify options
 
 ```javascript
-let MainRouter = new RebelRouter("main");
-MainRouter.add("/about", AboutPage).setDefault(HomePage);
+const routes = {
+    "/about": AboutPage,
+    "default": HomePage
+};
+
+const options = {
+    "animation": false, //DEFAULT: false
+    "shadowRoot": false //DEFAULT: false
+};
+
+RebelRouter.create("main", routes);
 ```
 
 5. Add your view to your document
@@ -99,6 +108,116 @@ MainRouter.add("/about", AboutPage).setDefault(HomePage);
 ```
 
 A complete tutorial on how to build applications with rebel-router can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
+
+#Usage
+
+##Methods
+
+###RebelRouter.create(name, routes, options)
+
+Creates a new router instance.
+
+####Arguments
+
+*name*
+
+The unique name of the router instance.
+
+*routes*
+
+An object containing all the routes and associated view classes where the key is the route and the value is the view class. Use `{}` to dictate URL params (e.g. "/user/{id}") and `default` to specify a fallback route if no other routes are matched.
+
+Example:
+
+```javascript
+{
+    "/info": InfoPage,
+    "/resources/{resource}": ResourcesList,
+    "/resource/people/{id}": PeopleResource,
+    "/resource/starships/{id}": StarshipsResource,
+    "/resource/vehicles/{id}":  VehiclesResource,
+    "/resource/species/{id}": SpeciesResource,
+    "/resource/planets/{id}": PlanetsResource,
+    "default": HomePage
+}
+```
+
+*options*
+
+An object containing option configuration options for the router instance.
+
+1. `animation` - Whether you want animation support to enable you to use CSS enables for route transitions. Default: false
+2. `shadowDOM` - Whether you want the router to automatically place your views within a sub-DOM tree. Default: false
+
+Example: 
+
+```javascript
+{
+    "animation": false,
+    "ShadowDOM": false,  
+}
+```
+
+####Returns
+
+This method doesn't return anything.
+
+####Example
+
+```javascript
+const routes = {
+    "/info": InfoPage,
+    "/resources/{resource}": ResourcesList,
+    "/resource/people/{id}": PeopleResource,
+    "/resource/starships/{id}": StarshipsResource,
+    "/resource/vehicles/{id}":  VehiclesResource,
+    "/resource/species/{id}": SpeciesResource,
+    "/resource/planets/{id}": PlanetsResource,
+    "default": HomePage
+};
+
+const options = {
+    animation: true
+};
+
+RebelRouter.create("main", routes, options);
+```
+
+##Elements
+
+This section of the document outlines all of the DOM elements available for use as part of the rebel-router.
+
+###rebel-router
+
+This element is used to insert a pre-configured router instance into the DOM.
+
+####Attributes
+
+*instance*
+
+The unique name of the instance you have already configured via the `RebelRouter.create()` method.
+
+####Example
+
+```html
+<rebel-router instance="main"></rebel-router>
+```
+
+###rebel-back-a
+
+An extended HTML anchor element which is used to trigger a back animation for router instances which have animation enabled.
+
+####Attributes
+
+*href*
+
+The path of the route the anchor element should navigate too
+
+####Example
+
+```html
+    <a href="#/user/1" is="rebel-back-a"><span class="icon icon-arrow-left2"></span> Back</a>
+```
 
 #To Do
 
