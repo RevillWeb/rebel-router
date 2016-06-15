@@ -119,11 +119,11 @@ Creates a new router instance.
 
 ####Arguments
 
-1. **name**
+1) **name**
 
 The unique name of the router instance. (e.g. `main`, `admin`, etc.)
 
-2. **routes**
+2) **routes**
 
 An object containing all the routes and associated view classes where the key is the route and the value is the view class. Use `{}` to dictate URL params (e.g. "/user/{id}") and `default` to specify a fallback route if no other routes are matched.
 
@@ -142,7 +142,7 @@ An object containing all the routes and associated view classes where the key is
 }
 ```
 
-3. **options**
+3) **options**
 
 An object containing option configuration options for the router instance.
 
