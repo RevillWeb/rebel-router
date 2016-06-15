@@ -193,7 +193,7 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 ####Attributes
 
-1. **instance**
+1) **instance**
 
 The unique name of the instance you have already configured via the `RebelRouter.create()` method.
 
@@ -209,7 +209,7 @@ An extended HTML anchor element which is used to trigger a back animation for ro
 
 ####Attributes
 
-1. **href**
+1) **href**
 
 The path of the route the anchor element should navigate too
 
