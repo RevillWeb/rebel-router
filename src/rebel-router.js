@@ -241,9 +241,9 @@ export class RebelRouter {
 }
 
 /**
- * Represents a router template which is used as the prototype for each RebelRouter element registered.
+ * Represents a router instance which is used as the prototype for each RebelRouter element registered.
  */
-class RouterInstance extends HTMLDivElement {
+class RouterInstance extends HTMLElement {
 
     createdCallback() {
         this.name = this.getAttribute("instance");
@@ -384,10 +384,7 @@ class RouterInstance extends HTMLDivElement {
     };
 }
 
-document.registerElement("rebel-router", {
-    "extends": "div",
-    "prototype": RouterInstance.prototype
-});
+document.registerElement("rebel-router", RouterInstance);
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
@@ -404,6 +401,9 @@ class RebelBackA extends HTMLAnchorElement {
         });
     }
 }
+/**
+ * Register the back button custom element
+ */
 document.registerElement("rebel-back-a", {
     extends: "a",
     prototype: RebelBackA.prototype
