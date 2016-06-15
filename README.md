@@ -119,15 +119,15 @@ Creates a new router instance.
 
 ####Arguments
 
-*name*
+1. **name**
 
-The unique name of the router instance.
+The unique name of the router instance. (e.g. `main`, `admin`, etc.)
 
-*routes*
+2. **routes**
 
 An object containing all the routes and associated view classes where the key is the route and the value is the view class. Use `{}` to dictate URL params (e.g. "/user/{id}") and `default` to specify a fallback route if no other routes are matched.
 
-Example:
+*Example:*
 
 ```javascript
 {
@@ -142,14 +142,14 @@ Example:
 }
 ```
 
-*options*
+3 **options**
 
 An object containing option configuration options for the router instance.
 
 1. `animation` - Whether you want animation support to enable you to use CSS enables for route transitions. Default: false
 2. `shadowDOM` - Whether you want the router to automatically place your views within a sub-DOM tree. Default: false
 
-Example: 
+*Example:* 
 
 ```javascript
 {
@@ -193,7 +193,7 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 ####Attributes
 
-*instance*
+1. **instance**
 
 The unique name of the instance you have already configured via the `RebelRouter.create()` method.
 
@@ -209,7 +209,7 @@ An extended HTML anchor element which is used to trigger a back animation for ro
 
 ####Attributes
 
-*href*
+1. **href**
 
 The path of the route the anchor element should navigate too
 
