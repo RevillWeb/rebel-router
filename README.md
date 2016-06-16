@@ -123,6 +123,30 @@ Creates a new router instance.
 
 ####Arguments
 
+| Argument Name | Required | Type   | Example     | Comments                                              |
+| -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
+| name      |   Yes     | String | main | If the component should convert all tags to lowercase |
+| routes      |   Yes     | Object | ```javascript
+                                                                        {
+                                                                            "/info": InfoPage,
+                                                                            "/resources/{resource}": ResourcesList,
+                                                                            "/resource/people/{id}": PeopleResource,
+                                                                            "/resource/starships/{id}": StarshipsResource,
+                                                                            "/resource/vehicles/{id}":  VehiclesResource,
+                                                                            "/resource/species/{id}": SpeciesResource,
+                                                                            "/resource/planets/{id}": PlanetsResource,
+                                                                            "default": HomePage
+                                                                        }
+                                                                        ``` | If the component should convert all tags to uppercase |
+| options     |   No     | Object | ```javascript
+                                    {
+                                        "animation": false,
+                                        "ShadowDOM": false,  
+                                    }
+                                    ``` | If the component should allow duplicate tags          |
+
+
+
 1) **name**
 
 The unique name of the router instance. (e.g. `main`, `admin`, etc.)
@@ -197,9 +221,9 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 ####Attributes
 
-1) **instance**
-
-The unique name of the instance you have already configured via the `RebelRouter.create()` method.
+| Attribute Name | Required | Type   | Example     | Comments                                              |
+| -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
+| instance       |   Yes    | String | main, admin | The unique name of the instance you have already configured via the `RebelRouter.create()` method. |
 
 ####Example
 
@@ -213,9 +237,9 @@ An extended HTML anchor element which is used to trigger a back animation for ro
 
 ####Attributes
 
-1) **href**
-
-The path of the route the anchor element should navigate too
+| Attribute Name | Required | Type   | Example     | Comments                                              |
+| -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
+| href           |   Yes    | String | `#/users` | The path of the route the anchor element should navigate too. |
 
 ####Example
 
