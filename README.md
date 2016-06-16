@@ -6,6 +6,8 @@ A lightweight JavaScript router written for ultra-modern web applications where 
 <p>&nbsp;</p>
 <div align="center"><a href="http://revillweb.github.io/rebel-router-demo/" target="_blank"><img src="http://i.imgur.com/Y1TfcAT.png" /></a>&nbsp;<a href="https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example" target="_blank"><img src="http://i.imgur.com/4Dccydy.png" /></a></div>
 
+**Note:** Currently this is very much a work in progress. I'm working hard to add more desirable features such as History API support and getting the router field testing in real world applications.
+
 ##Features
 
 * Light-weight
@@ -225,5 +227,5 @@ An extended HTML anchor element which is used to trigger a back animation for ro
 
 #To Do
 
-* History API Support - I've not found any real need for this yet and it creates an extra level of friction due to the requirement of server side configuration. But this router is aimed at ultra-modern applications so it should be implemented at some point
+* History API Support - Where as I've not yet found any real need for this this router is aimed at ultra-modern applications now that the History API is widely supported this will be one of the next features added
 * Intercept transition - A nice feature of many routers is the ability to do work and resolve when finished before a route transition completes allowing you to set-up data from the next page
