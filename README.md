@@ -121,7 +121,7 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 Configuration is specified via child elements of `<rebel-router>`.
 
-###route
+###`<route></route>`
 
 ####Attributes
 
@@ -134,7 +134,7 @@ Configuration is specified via child elements of `<rebel-router>`.
 
 If you do not wish to use a component to render your view for the specified path you are able to add arbitrary HTML to be used as the template. 
 
-###default
+###`<default></default>`
 
 ###Attributes
 
@@ -164,7 +164,7 @@ As with the route element you are also able to add arbitrary HTML to be used as 
 </rebel-router>
 ```
 
-##rebel-back-a
+##`<rebel-back-a></rebel-back-a>`
 
 An extended HTML anchor element which is used to trigger a back animation for router instances which have animation enabled.
 
