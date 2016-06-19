@@ -43,11 +43,11 @@ The latest features of JavaScript (ES2015-17) provide solutions to problems web 
 
 Rebel-router is designed to be used when building applications using the latest version of JavaScript and will need transpiling down to ES5 using [babel](https://babeljs.io/) or similar.
 
-1. Install rebel-router into your project from npm
+1) Install rebel-router into your project from npm
 
 ``` npm install rebel-router ```
 
-2. Create your views as web components
+2) Create your views as web components
 
 ```javascript
 #home.js
@@ -82,7 +82,7 @@ export class AboutPage extends HTMLElement {
 document.registerElement("about-page", AboutPage);
 ```
 
-3. Import your views into your main application file to register the elements.
+3) Import your views into your main application file to register the elements.
 
 ```javascript
 #app.js
@@ -90,7 +90,7 @@ import {HomePage} from './home.js';
 import {AboutPage} from './about.js';
 ```
 
-5. Add the router and specify configuration in your HTML file
+4) Add the router and specify configuration in your HTML file
 
 ```html
     <rebel-router animation="true" shadow="false">
@@ -100,13 +100,13 @@ import {AboutPage} from './about.js';
     </rebel-router>
 ```
 
-A simple tutorial on how to get started with rebel-router can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
+A simple tutorial on how to get started with **rebel-router** can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
 
 #Usage
 
-This section of the document full details the API for rebel-router.
+This section of the document details the API for rebel-router.
 
-##rebel-router
+##`<rebel-router></rebel-router>`
 
 This element is used to insert a pre-configured router instance into the DOM.
 
