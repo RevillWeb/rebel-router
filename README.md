@@ -20,7 +20,7 @@ A lightweight JavaScript router written for ultra-modern web applications where 
 
 * [Getting started tutorial](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
 * [Accessing route parameters](https://github.com/RevillWeb/rebel-router-examples/tree/master/route-params)
-* Using nested routing
+* [Using nested routing](https://github.com/RevillWeb/rebel-router-examples/tree/master/nested-routing)
 * Using animations
 * [Complete demo](http://revillweb.github.io/rebel-router-demo/)
 
@@ -93,14 +93,14 @@ import {AboutPage} from './about.js';
 4) Add the router and specify configuration in your HTML file
 
 ```html
-    <rebel-router animation="true" shadow="false">
+    <rebel-router animation="true" shadow="false" inherit="false">
         <route path="/about" component="about-page"></route>
         <route path="/info"><p>This is a simple info page.</p></route>
         <default component="home-page"></default>
     </rebel-router>
 ```
 
-A simple tutorial on how to get started with **rebel-router** can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
+A simple tutorial on how to get started with **rebel-router** can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started).
 
 #Usage
 
@@ -112,10 +112,11 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 ###Attributes
 
-| Attribute Name | Required | Type    | Example     | Comments                                                                |
-| -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------- |
-| animation      |   No     | Boolean | true        | Whether or not to enable animation for route transitions.               |
-| shadow         |   No     | Boolean | false       | Whether or not the router should be encapsulated within the shadow DOM. |
+| Attribute Name | Required | Type    | Example     | Default | Comments                                                                |
+| -------------- | -------- | ------- | ----------- | ------- | ----------------------------------------------------------------------- |
+| animation      |   No     | Boolean | true        | false   | Whether or not to enable animation for route transitions.               |
+| shadow         |   No     | Boolean | false       | false   | Whether or not the router should be encapsulated within the shadow DOM. |
+| inherit        |   No     | Boolean | false       | false   | Whether or not the router should inherit a parent routes path.          |
 
 ###Children
 
@@ -140,7 +141,7 @@ If you do not wish to use a component to render your view for the specified path
 
 | Attribute Name | Required | Type    | Example     | Comments                                                                            |
 | -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
-| component      |   No     | String  | home-page  | The registered element name of the component to be rendered for the specified path.  |
+| component      |   No     | String  | home-page   | The registered element name of the component to be rendered for the specified path.  |
 
 ####Children
 
@@ -149,7 +150,7 @@ As with the route element you are also able to add arbitrary HTML to be used as 
 ###Example
 
 ```html
-<rebel-router animation="true" shadow="false">
+<rebel-router animation="true" shadow="false" inherit="false">
     <route path="/info" component="info-page"></route>
     <route path="/resources/{resource}" component="resources-list"></route>
     <route path="/resource/people/{id}" component="people-resource"></route>
