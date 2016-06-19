@@ -12,7 +12,7 @@ export class RebelRouter extends HTMLElement {
 
     createdCallback() {
 
-        this.initialised = false;
+        this.previousPath = null;
 
         //Get options
         this.options = {
@@ -38,29 +38,27 @@ export class RebelRouter extends HTMLElement {
         //After we have collected all configuration clear innerHTML
         this.innerHTML = "";
 
-        if (this.initialised === false) {
-            if (this.options.shadowRoot === true) {
-                this.createShadowRoot();
-                this.root = this.shadowRoot;
-            } else {
-                this.root = this;
-            }
+        if (this.options.shadowRoot === true) {
+            this.createShadowRoot();
+            this.root = this.shadowRoot;
+        } else {
+            this.root = this;
+        }
+        if (this.options.animation === true) {
+            this.initAnimation();
+        }
+        this.render();
+        RebelRouter.pathChange((isBack) => {
             if (this.options.animation === true) {
-                this.initAnimation();
+                if (isBack === true) {
+                    this.classList.add("rbl-back");
+                } else {
+                    this.classList.remove("rbl-back");
+                }
             }
             this.render();
-            RebelRouter.pathChange((isBack) => {
-                if (this.options.animation === true) {
-                    if (isBack === true) {
-                        this.classList.add("rbl-back");
-                    } else {
-                        this.classList.remove("rbl-back");
-                    }
-                }
-                this.render();
-            });
-            this.initialised = true;
-        }
+        });
+
     }
 
     /**
