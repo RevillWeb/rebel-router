@@ -158,7 +158,7 @@ As with the route element you are also able to add arbitrary HTML to be used as 
     <route path="/resource/species/{id}" component="species-resource"></route>
     <route path="/resource/planets/{id}" component="planets-resource"></route>
     <route path="/test/{id}">
-        <p>This is a simple page template which can access the router params: ${id}.</p>
+        <p>This is a simple page template which can access the route params: ${id}.</p>
     </route>
     <default component="home-page"></default>
 </rebel-router>
