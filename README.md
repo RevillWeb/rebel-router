@@ -18,10 +18,10 @@ A lightweight JavaScript router written for ultra-modern web applications where 
 
 ##Examples
 
-* [Simple Example](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example)
-* Using URL parameters
+* [Getting started tutorial](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
+* [Accessing route parameters](https://github.com/RevillWeb/rebel-router-examples/tree/master/route-params)
+* Using nested routing
 * Using animations
-* Nested routing example
 * [Complete demo](http://revillweb.github.io/rebel-router-demo/)
 
 ##Platform Support
