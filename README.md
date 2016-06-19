@@ -62,6 +62,8 @@ export class HomePage extends HTMLElement {
         this.innerHTML = this.template;
     }
 }
+
+document.registerElement("home-page", HomePage);
 ```
 
 ```javascript
@@ -77,9 +79,10 @@ export class AboutPage extends HTMLElement {
         this.innerHTML = this.template;
     }
 }
+document.registerElement("about-page", AboutPage);
 ```
 
-3. Import your views into your main application file
+3. Import your views into your main application file to register the elements.
 
 ```javascript
 #app.js
@@ -87,139 +90,91 @@ import {HomePage} from './home.js';
 import {AboutPage} from './about.js';
 ```
 
-4. Create a router instance, configure routes and specify options
-
-```javascript
-const routes = {
-    "/about": AboutPage,
-    "default": HomePage
-};
-
-const options = {
-    "animation": false, //DEFAULT: false
-    "shadowRoot": false //DEFAULT: false
-};
-
-RebelRouter.create("main", routes);
-```
-
-5. Add your view to your document
+5. Add the router and specify configuration in your HTML file
 
 ```html
-    <rebel-router instance="main"></rebel-router>
+    <rebel-router animation="true" shadow="false">
+        <route path="/about" component="about-page"></route>
+        <route path="/info"><p>This is a simple info page.</p></route>
+        <default component="home-page"></default>
+    </rebel-router>
 ```
 
-A complete tutorial on how to build applications with rebel-router can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
+A simple tutorial on how to get started with rebel-router can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example).
 
 #Usage
 
 This section of the document full details the API for rebel-router.
 
-##Methods
-
-There is currently only one method available as part of rebel-router which is used to create new instances of a router.
-
-###RebelRouter.create(name, routes, options)
-
-Creates a new router instance.
-
-####Arguments
-
-1) **name**
-
-The unique name of the router instance. (e.g. `main`, `admin`, etc.)
-
-2) **routes**
-
-An object containing all the routes and associated view classes where the key is the route and the value is the view class. Use `{}` to dictate URL params (e.g. "/user/{id}") and `default` to specify a fallback route if no other routes are matched.
-
-*Example:*
-
-```javascript
-{
-    "/info": InfoPage,
-    "/resources/{resource}": ResourcesList,
-    "/resource/people/{id}": PeopleResource,
-    "/resource/starships/{id}": StarshipsResource,
-    "/resource/vehicles/{id}":  VehiclesResource,
-    "/resource/species/{id}": SpeciesResource,
-    "/resource/planets/{id}": PlanetsResource,
-    "default": HomePage
-}
-```
-
-3) **options**
-
-An object containing option configuration options for the router instance.
-
-1. `animation` - Whether you want animation support to enable you to use CSS enables for route transitions. Default: false
-2. `shadowDOM` - Whether you want the router to automatically place your views within a sub-DOM tree. Default: false
-
-*Example:* 
-
-```javascript
-{
-    "animation": false,
-    "ShadowDOM": false,  
-}
-```
-
-####Returns
-
-This method doesn't return anything.
-
-####Example
-
-```javascript
-const routes = {
-    "/info": InfoPage,
-    "/resources/{resource}": ResourcesList,
-    "/resource/people/{id}": PeopleResource,
-    "/resource/starships/{id}": StarshipsResource,
-    "/resource/vehicles/{id}":  VehiclesResource,
-    "/resource/species/{id}": SpeciesResource,
-    "/resource/planets/{id}": PlanetsResource,
-    "default": HomePage
-};
-
-const options = {
-    animation: true
-};
-
-RebelRouter.create("main", routes, options);
-```
-
-##Elements
-
-This section of the document outlines all of the DOM elements available for use as part of the rebel-router.
-
-###rebel-router
+##rebel-router
 
 This element is used to insert a pre-configured router instance into the DOM.
 
+###Attributes
+
+| Attribute Name | Required | Type    | Example     | Comments                                                                |
+| -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------- |
+| animation      |   No     | Boolean | true        | Whether or not to enable animation for route transitions.               |
+| shadow         |   No     | Boolean | false       | Whether or not the router should be encapsulated within the shadow DOM. |
+
+###Children
+
+Configuration is specified via child elements of `<rebel-router>`.
+
+###route
+
 ####Attributes
 
-| Attribute Name | Required | Type   | Example     | Comments                                              |
-| -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
-| instance       |   Yes    | String | `main` | The unique name of the instance you have already configured via the `RebelRouter.create()` method. |
+| Attribute Name | Required | Type    | Example     | Comments                                                                            |
+| -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
+| path           |   Yes    | String  | /user/{id}  | The path to which the specified template or component should be rendered.           |
+| component      |   No     | String  | about-page  | The registered element name of the component to be rendered for the specified path. |
 
-####Example
+####Children
+
+If you do not wish to use a component to render your view for the specified path you are able to add arbitrary HTML to be used as the template. 
+
+###default
+
+###Attributes
+
+| Attribute Name | Required | Type    | Example     | Comments                                                                            |
+| -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
+| component      |   No     | String  | home-page  | The registered element name of the component to be rendered for the specified path.  |
+
+####Children
+
+As with the route element you are also able to add arbitrary HTML to be used as the template. 
+
+###Example
 
 ```html
-<rebel-router instance="main"></rebel-router>
+<rebel-router animation="true" shadow="false">
+    <route path="/info" component="info-page"></route>
+    <route path="/resources/{resource}" component="resources-list"></route>
+    <route path="/resource/people/{id}" component="people-resource"></route>
+    <route path="/resource/starships/{id}" component="starships-resource"></route>
+    <route path="/resource/vehicles/{id}" component="vehicles-resource"></route>
+    <route path="/resource/species/{id}" component="species-resource"></route>
+    <route path="/resource/planets/{id}" component="planets-resource"></route>
+    <route path="/test/{id}">
+        <p>This is a simple page template which can access the router params: ${id}.</p>
+    </route>
+    <default component="home-page"></default>
+</rebel-router>
 ```
 
-###rebel-back-a
+##rebel-back-a
 
 An extended HTML anchor element which is used to trigger a back animation for router instances which have animation enabled.
 
-####Attributes
+###Attributes
 
 | Attribute Name | Required | Type   | Example     | Comments                                              |
 | -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
 | href           |   Yes    | String | `#/users` | The path of the route the anchor element should navigate too. |
 
-####Example
+###Example
 
 ```html
     <a href="#/user/1" is="rebel-back-a"><span class="icon icon-arrow-left2"></span> Back</a>
@@ -229,3 +184,4 @@ An extended HTML anchor element which is used to trigger a back animation for ro
 
 * History API Support - Where as I've not yet found any real need for this this router is aimed at ultra-modern applications now that the History API is widely supported this will be one of the next features added
 * Intercept transition - A nice feature of many routers is the ability to do work and resolve when finished before a route transition completes allowing you to set-up data from the next page
+* Write a comprehensive test suite to test all aspects of rebel-router and associated elements
