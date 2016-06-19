@@ -13,20 +13,41 @@ export class RebelRouter extends HTMLElement {
     createdCallback() {
 
         this.previousPath = null;
+        this.basePath = null;
 
         //Get options
         this.options = {
             "animation": (this.getAttribute("animation") == "true"),
-            "shadowRoot": (this.getAttribute("shadow") == "true")
+            "shadowRoot": (this.getAttribute("shadow") == "true"),
+            "inherit": (this.getAttribute("inherit") == "true")
         };
 
         //Get routes
+        if (this.options.inherit === true) {
+            //If this is a nested router then we need to go and get the parent path
+            let $element = this;
+            while ($element.parentNode) {
+                $element = $element.parentNode;
+                if ($element.nodeName.toLowerCase() == "rebel-router") {
+                    const current = $element.current();
+                    this.basePath = current.route;
+                    break;
+                }
+            }
+        }
         this.routes = {};
         const $children = this.children;
         for (let i = 0; i < $children.length; i++) {
             const $child = $children[i];
-            const path = ($child.nodeName.toLowerCase() == "default") ? "*" : $child.getAttribute("path");
-            const component = $child.getAttribute("component");
+            let path = $child.getAttribute("path");
+            switch ($child.nodeName.toLowerCase()) {
+                case "default":
+                    path = "*";
+                    break;
+                case "route":
+                    path = (this.basePath !== null) ? this.basePath + path : path;
+                    break;
+            }
             if (path !== null) {
                 this.routes[path] = {
                     "component": $child.getAttribute("component"),
