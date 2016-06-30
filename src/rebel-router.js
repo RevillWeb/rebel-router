@@ -19,7 +19,7 @@ export class RebelRouter extends HTMLElement {
         this.options = {
             "animation": (this.getAttribute("animation") == "true"),
             "shadowRoot": (this.getAttribute("shadow") == "true"),
-            "inherit": (this.getAttribute("inherit") == "true")
+            "inherit": (this.getAttribute("inherit") != "false")
         };
 
         //Get routes

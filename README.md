@@ -116,7 +116,7 @@ This element is used to insert a pre-configured router instance into the DOM.
 | -------------- | -------- | ------- | ----------- | ------- | ----------------------------------------------------------------------- |
 | animation      |   No     | Boolean | true        | false   | Whether or not to enable animation for route transitions.               |
 | shadow         |   No     | Boolean | false       | false   | Whether or not the router should be encapsulated within the shadow DOM. |
-| inherit        |   No     | Boolean | false       | false   | Whether or not the router should inherit a parent routes path.          |
+| inherit        |   No     | Boolean | false       | true    | Whether or not the router should inherit a parent routes path.          |
 
 ###Children
 
