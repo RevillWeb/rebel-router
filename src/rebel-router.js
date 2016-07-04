@@ -405,8 +405,11 @@ document.registerElement("rebel-back-a", {
  */
 function _routeResult(obj, route, regex, path) {
     let result = {};
-    result.component = obj.component;
-    result.template = obj.template;
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            result[key] = obj[key];
+        }
+    }
     result.route = route;
     result.path = path;
     result.params = RebelRouter.getParamsFromUrl(regex, route, path);
