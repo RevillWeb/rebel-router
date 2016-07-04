@@ -10,13 +10,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { 
-    if (typeof superClass !== "function" && superClass !== null) { 
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });
-    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * Created by Leon Revill on 15/12/2015.
@@ -40,8 +34,15 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
 
     _createClass(RebelRouter, [{
         key: "createdCallback",
-        value: function createdCallback() {
+
+        /**
+         * Main initialisation point of rebel-router
+         * @param prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
+         */
+        value: function createdCallback(prefix) {
             var _this2 = this;
+
+            var _prefix = prefix || "rebel";
 
             this.previousPath = null;
             this.basePath = null;
@@ -59,7 +60,7 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
                 var $element = this;
                 while ($element.parentNode) {
                     $element = $element.parentNode;
-                    if ($element.nodeName.toLowerCase() == "rebel-router") {
+                    if ($element.nodeName.toLowerCase() == _prefix + "-router") {
                         var current = $element.current();
                         this.basePath = current.route;
                         break;
@@ -72,10 +73,10 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
                 var $child = $children[i];
                 var path = $child.getAttribute("path");
                 switch ($child.nodeName.toLowerCase()) {
-                    case "default":
+                    case _prefix + "-default":
                         path = "*";
                         break;
-                    case "route":
+                    case _prefix + "-route":
                         path = this.basePath !== null ? this.basePath + path : path;
                         break;
                 }
@@ -416,6 +417,42 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
 document.registerElement("rebel-router", RebelRouter);
 
 /**
+ * Class which represents the rebel-route custom element
+ */
+
+var RebelRoute = (function (_HTMLElement2) {
+    _inherits(RebelRoute, _HTMLElement2);
+
+    function RebelRoute() {
+        _classCallCheck(this, RebelRoute);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelRoute).apply(this, arguments));
+    }
+
+    return RebelRoute;
+})(HTMLElement);
+
+document.registerElement("rebel-route", RebelRoute);
+
+/**
+ * Class which represents the rebel-default custom element
+ */
+
+var RebelDefault = (function (_HTMLElement3) {
+    _inherits(RebelDefault, _HTMLElement3);
+
+    function RebelDefault() {
+        _classCallCheck(this, RebelDefault);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(RebelDefault).apply(this, arguments));
+    }
+
+    return RebelDefault;
+})(HTMLElement);
+
+document.registerElement("rebel-default", RebelDefault);
+
+/**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
  */
 
@@ -431,10 +468,10 @@ var RebelBackA = (function (_HTMLAnchorElement) {
     _createClass(RebelBackA, [{
         key: "attachedCallback",
         value: function attachedCallback() {
-            var _this5 = this;
+            var _this7 = this;
 
             this.addEventListener("click", function (event) {
-                var path = _this5.getAttribute("href");
+                var path = _this7.getAttribute("href");
                 event.preventDefault();
                 if (path !== undefined) {
                     window.dispatchEvent(new CustomEvent('rblback'));
