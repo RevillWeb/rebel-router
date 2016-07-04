@@ -12,11 +12,12 @@ export class RebelRouter extends HTMLElement {
 
     /**
      * Main initialisation point of rebel-router
-     * @param _prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
+     * @param prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
      */
     createdCallback(prefix) {
 
-        this.prefix = prefix || "rebel";
+        const _prefix = prefix || "rebel";
+        
         this.previousPath = null;
         this.basePath = null;
 
@@ -33,7 +34,7 @@ export class RebelRouter extends HTMLElement {
             let $element = this;
             while ($element.parentNode) {
                 $element = $element.parentNode;
-                if ($element.nodeName.toLowerCase() == this.prefix + "-router") {
+                if ($element.nodeName.toLowerCase() == _prefix + "-router") {
                     const current = $element.current();
                     this.basePath = current.route;
                     break;
@@ -46,10 +47,10 @@ export class RebelRouter extends HTMLElement {
             const $child = $children[i];
             let path = $child.getAttribute("path");
             switch ($child.nodeName.toLowerCase()) {
-                case this.prefix + "-default":
+                case _prefix + "-default":
                     path = "*";
                     break;
-                case this.prefix + "-route":
+                case _prefix + "-route":
                     path = (this.basePath !== null) ? this.basePath + path : path;
                     break;
             }
@@ -352,8 +353,23 @@ export class RebelRouter extends HTMLElement {
 }
 
 document.registerElement("rebel-router", RebelRouter);
-document.registerElement("rebel-route", HTMLElement);
-document.registerElement("rebel-default", HTMLElement);
+
+/**
+ * Class which represents the rebel-route custom element
+ */
+class RebelRoute extends HTMLElement {
+
+}
+document.registerElement("rebel-route", RebelRoute);
+
+/**
+ * Class which represents the rebel-default custom element
+ */
+class RebelDefault extends HTMLElement {
+
+}
+document.registerElement("rebel-default", RebelDefault);
+
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
