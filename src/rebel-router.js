@@ -10,8 +10,13 @@
  */
 export class RebelRouter extends HTMLElement {
 
-    createdCallback() {
+    /**
+     * Main initialisation point of rebel-router
+     * @param _prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
+     */
+    createdCallback(prefix) {
 
+        this.prefix = prefix || "rebel";
         this.previousPath = null;
         this.basePath = null;
 
@@ -28,7 +33,7 @@ export class RebelRouter extends HTMLElement {
             let $element = this;
             while ($element.parentNode) {
                 $element = $element.parentNode;
-                if ($element.nodeName.toLowerCase() == "rebel-router") {
+                if ($element.nodeName.toLowerCase() == this.prefix + "-router") {
                     const current = $element.current();
                     this.basePath = current.route;
                     break;
@@ -41,10 +46,10 @@ export class RebelRouter extends HTMLElement {
             const $child = $children[i];
             let path = $child.getAttribute("path");
             switch ($child.nodeName.toLowerCase()) {
-                case "default":
+                case this.prefix + "-default":
                     path = "*";
                     break;
-                case "route":
+                case this.prefix + "-route":
                     path = (this.basePath !== null) ? this.basePath + path : path;
                     break;
             }
@@ -347,6 +352,8 @@ export class RebelRouter extends HTMLElement {
 }
 
 document.registerElement("rebel-router", RebelRouter);
+document.registerElement("rebel-route", HTMLElement);
+document.registerElement("rebel-default", HTMLElement);
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
