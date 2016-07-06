@@ -424,7 +424,7 @@ document.registerElement("rebel-router", RebelRouter);
  * Class which represents the rebel-route custom element
  */
 
-var RebelRoute = (function (_HTMLElement2) {
+var RebelRoute = exports.RebelRoute = (function (_HTMLElement2) {
     _inherits(RebelRoute, _HTMLElement2);
 
     function RebelRoute() {

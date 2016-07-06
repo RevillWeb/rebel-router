@@ -361,7 +361,7 @@ document.registerElement("rebel-router", RebelRouter);
 /**
  * Class which represents the rebel-route custom element
  */
-class RebelRoute extends HTMLElement {
+export class RebelRoute extends HTMLElement {
 
 }
 document.registerElement("rebel-route", RebelRoute);
