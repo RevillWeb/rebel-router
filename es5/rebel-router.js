@@ -81,9 +81,13 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
                         break;
                 }
                 if (path !== null) {
+                    var $template = null;
+                    if ($child.innerHTML) {
+                        $template = "<" + _prefix + "-route>" + $child.innerHTML + "</" + _prefix + "-route>";
+                    }
                     this.routes[path] = {
                         "component": $child.getAttribute("component"),
-                        "template": $child.innerHTML || null
+                        "template": $template
                     };
                 }
             }
@@ -213,7 +217,7 @@ var RebelRouter = exports.RebelRouter = (function (_HTMLElement) {
                                 return typeof r === 'string' || typeof r === 'number' ? r : a;
                             });
                         }
-                        this.root.innerHTML = "<div>" + $template + "</div>";
+                        this.root.innerHTML = $template;
                     }
                     this.previousPath = result.path;
                 }
