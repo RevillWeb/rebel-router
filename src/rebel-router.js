@@ -55,9 +55,13 @@ export class RebelRouter extends HTMLElement {
                     break;
             }
             if (path !== null) {
+                let $template = null;
+                if ($child.innerHTML) {
+                    $template = "<" + _prefix + "-route>" + $child.innerHTML + "</" + _prefix + "-route>";
+                }
                 this.routes[path] = {
                     "component": $child.getAttribute("component"),
-                    "template": $child.innerHTML || null
+                    "template": $template
                 };
             }
         }
@@ -177,7 +181,7 @@ export class RebelRouter extends HTMLElement {
                             }
                         );
                     }
-                    this.root.innerHTML = `<div>${$template}</div>`;
+                    this.root.innerHTML = $template;
                 }
                 this.previousPath = result.path;
             }
