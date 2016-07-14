@@ -1,8 +1,8 @@
 <div align="center">
-<img src="http://i.imgur.com/aKQ3Mmi.png" alt="IDE" />
+![Rebel-Router](https://github.com/PixelsCommander/rebel-router/blob/master/assets/rr.png?raw=true)
 </div>
 <p>&nbsp;</p>
-A lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens. Rebel-router is designed to make building modern applications using ES2015 and beyond easier while not tying you into a specific framework or technology stack. Rebel-router allows you to write web components to represent your views so you can make full use of the view controller pattern based on nothing more than browser standards.
+Minimalistic JavaScript router for web components world. Inspired by React Router, works in plain HTML.
 <p>&nbsp;</p>
 <div align="center"><a href="http://revillweb.github.io/rebel-router-demo/" target="_blank"><img src="http://i.imgur.com/Y1TfcAT.png" /></a>&nbsp;<a href="https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example" target="_blank"><img src="http://i.imgur.com/4Dccydy.png" /></a></div>
 
