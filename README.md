@@ -1,10 +1,14 @@
 <div align="center">
 <img src="https://github.com/PixelsCommander/rebel-router/blob/master/assets/rr.png?raw=true">
 </div>
-<p>&nbsp;</p>
-Minimalistic JavaScript router for web components world. Inspired by React Router, works in plain HTML.
-<p>&nbsp;</p>
-<div align="center"><a href="http://revillweb.github.io/rebel-router-demo/" target="_blank"><img src="http://i.imgur.com/Y1TfcAT.png" /></a>&nbsp;<a href="https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example" target="_blank"><img src="http://i.imgur.com/4Dccydy.png" /></a></div>
+
+Minimalistic JavaScript router for Web Components world
+=======================================================
+
+Inspired by React Router, works in plain HTML.
+
+[Demo](http://revillweb.github.io/rebel-router-demo/)
+[Simple example](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example)
 
 **Note:** Currently this is very much a work in progress. I'm working hard to add more desirable features such as History API support and getting the router field testing in real world applications.
 
