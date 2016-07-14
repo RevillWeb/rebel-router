@@ -1,5 +1,5 @@
 <div align="center">
-![Rebel-Router](https://github.com/PixelsCommander/rebel-router/blob/master/assets/rr.png?raw=true)
+<img src="https://github.com/PixelsCommander/rebel-router/blob/master/assets/rr.png?raw=true">
 </div>
 <p>&nbsp;</p>
 Minimalistic JavaScript router for web components world. Inspired by React Router, works in plain HTML.
