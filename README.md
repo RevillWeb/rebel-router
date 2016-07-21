@@ -7,42 +7,7 @@ Inspired by React Router, works in plain HTML.
 - [Demo](http://revillweb.github.io/rebel-router-demo/)
 - [Simple example](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example)
 
-##Description
-
-Rebel router is a lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens. Rebel-router is designed to make building modern applications using ES2015 and beyond easier while not tying you into a specific framework or technology stack. Rebel-router allows you to write web components to represent your views so you can make full use of the view controller pattern based on nothing more than browser standards.
-
 **Note:** Currently this is very much a work in progress. I'm working hard to add more desirable features such as History API support and getting the router field testing in real world applications.
-
-##Features
-
-* Light-weight
-* Zero dependencies
-* Nested routes
-* Animation support
-* Built on web components
-
-##Examples
-
-* [Getting started tutorial](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
-* [Accessing route parameters](https://github.com/RevillWeb/rebel-router-examples/tree/master/route-params)
-* [Using nested routing](https://github.com/RevillWeb/rebel-router-examples/tree/master/nested-routing)
-* Using animations
-* [Complete demo](http://revillweb.github.io/rebel-router-demo/)
-
-##Platform Support
-
-While some browsers do not support the full specification for web components you will need to include the [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) pollyfill.
-
-
-| <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| Latest* ✔ | Latest ✔ | Latest ✔ | IE 11 ✔ | Latest ✔ | Latest* ✔ |
-*Includes both Mobile & Desktop versions.
-
-
-#Why?
-
-The latest features of JavaScript (ES2015-17) provide solutions to problems web developers have been struggling with for years. This includes native support for modules, true encapsulation with web components and a reliance on monolithic frameworks to really build anything scalable. Rebel-router allows the developer to write web components which represent views and provides an easy way to tie these views to a URL path with easy access to any parameters. This provides some flexible structure in writing vanilla JavaScript applications without frameworks.
 
 #Getting started
 
@@ -106,6 +71,40 @@ import {AboutPage} from './about.js';
 ```
 
 A simple tutorial on how to get started with **rebel-router** can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started).
+
+##Features
+
+* Light-weight
+* Zero dependencies
+* Nested routes
+* Animation support
+* Built on web components
+
+##Examples
+
+* [Getting started tutorial](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
+* [Accessing route parameters](https://github.com/RevillWeb/rebel-router-examples/tree/master/route-params)
+* [Using nested routing](https://github.com/RevillWeb/rebel-router-examples/tree/master/nested-routing)
+* Using animations
+* [Complete demo](http://revillweb.github.io/rebel-router-demo/)
+
+#What?
+
+Rebel router is a lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens. Rebel-router is designed to make building modern applications using ES2015 and beyond easier while not tying you into a specific framework or technology stack. Rebel-router allows you to write web components to represent your views so you can make full use of the view controller pattern based on nothing more than browser standards.
+
+#Why?
+
+The latest features of JavaScript (ES2015-17) provide solutions to problems web developers have been struggling with for years. This includes native support for modules, true encapsulation with web components and a reliance on monolithic frameworks to really build anything scalable. Rebel-router allows the developer to write web components which represent views and provides an easy way to tie these views to a URL path with easy access to any parameters. This provides some flexible structure in writing vanilla JavaScript applications without frameworks.
+
+##Platform Support
+
+While some browsers do not support the full specification for web components you will need to include the [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) pollyfill.
+
+
+| <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Latest* ✔ | Latest ✔ | Latest ✔ | IE 11 ✔ | Latest ✔ | Latest* ✔ |
+*Includes both Mobile & Desktop versions.
 
 #Usage
 
