@@ -75,10 +75,12 @@ A simple tutorial on how to get started with **rebel-router** can be found [here
 ##Features
 
 * Light-weight
-* Zero dependencies
+* Zero dependencies*
 * Nested routes
 * Animation support
 * Built on web components
+
+*Does currently require [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) for older browser support.
 
 ##Examples
 
