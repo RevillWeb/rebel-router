@@ -99,9 +99,9 @@ import {AboutPage} from './about.js';
 
 ```html
     <rebel-router animation="true" shadow="false" inherit="false">
-        <route path="/about" component="about-page"></route>
-        <route path="/info"><p>This is a simple info page.</p></route>
-        <default component="home-page"></default>
+        <rebel-route path="/about" component="about-page"></rebel-route>
+        <rebel-route path="/info"><p>This is a simple info page.</p></rebel-route>
+        <rebel-default component="home-page"></rebel-default>
     </rebel-router>
 ```
 
@@ -127,7 +127,7 @@ This element is used to insert a pre-configured router instance into the DOM.
 
 Configuration is specified via child elements of `<rebel-router>`.
 
-###`<route></route>`
+###`<rebel-route></rebel-route>`
 
 ####Attributes
 
@@ -140,13 +140,13 @@ Configuration is specified via child elements of `<rebel-router>`.
 
 If you do not wish to use a component to render your view for the specified path you are able to add arbitrary HTML to be used as the template. 
 
-###`<default></default>`
+###`<rebel-default></rebel-default>`
 
 ###Attributes
 
 | Attribute Name | Required | Type    | Example     | Comments                                                                            |
 | -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
-| component      |   No     | String  | home-page   | The registered element name of the component to be rendered for the specified path.  |
+| component      |   No     | String  | home-page   | The registered element name of the component to be rendered for the specified path. |
 
 ####Children
 
@@ -156,17 +156,17 @@ As with the route element you are also able to add arbitrary HTML to be used as 
 
 ```html
 <rebel-router animation="true" shadow="false" inherit="false">
-    <route path="/info" component="info-page"></route>
-    <route path="/resources/{resource}" component="resources-list"></route>
-    <route path="/resource/people/{id}" component="people-resource"></route>
-    <route path="/resource/starships/{id}" component="starships-resource"></route>
-    <route path="/resource/vehicles/{id}" component="vehicles-resource"></route>
-    <route path="/resource/species/{id}" component="species-resource"></route>
-    <route path="/resource/planets/{id}" component="planets-resource"></route>
-    <route path="/test/{id}">
+    <rebel-route path="/info" component="info-page"></rebel-route>
+    <rebel-route path="/resources/{resource}" component="resources-list"></rebel-route>
+    <rebel-route path="/resource/people/{id}" component="people-resource"></rebel-route>
+    <rebel-route path="/resource/starships/{id}" component="starships-resource"></rebel-route>
+    <rebel-route path="/resource/vehicles/{id}" component="vehicles-resource"></rebel-route>
+    <rebel-route path="/resource/species/{id}" component="species-resource"></rebel-route>
+    <rebel-route path="/resource/planets/{id}" component="planets-resource"></rebel-route>
+    <rebel-route path="/test/{id}">
         <p>This is a simple page template which can access the route params: ${id}.</p>
-    </route>
-    <default component="home-page"></default>
+    </rebel-route>
+    <rebel-default component="home-page"></rebel-default>
 </rebel-router>
 ```
 
