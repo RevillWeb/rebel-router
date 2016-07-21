@@ -5,7 +5,7 @@
 Inspired by React Router, works in plain HTML.
 
 - [Demo](http://revillweb.github.io/rebel-router-demo/)
-- [Simple example](https://github.com/RevillWeb/rebel-router-examples/tree/master/simple-example)
+- [Simple example](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
 
 **Note:** Currently this is very much a work in progress. I'm working hard to add more desirable features such as History API support and getting the router field testing in real world applications.
 
