@@ -1,9 +1,6 @@
-<div align="center">
-<img src="http://i.imgur.com/8CPaGEG.png">
-</div>
+#Minimalistic JavaScript router for Web Components
 
-Minimalistic JavaScript router for Web Components world
-=======================================================
+<div align="center"><img src="http://i.imgur.com/8CPaGEG.png"></div>
 
 Inspired by React Router, works in plain HTML.
 
