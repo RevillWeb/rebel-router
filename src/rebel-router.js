@@ -14,7 +14,8 @@ export class RebelRouter extends HTMLElement {
      * Main initialisation point of rebel-router
      * @param prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
      */
-    createdCallback(prefix) {
+    constructor(prefix) {
+        super();
 
         const _prefix = prefix || "rebel";
         
@@ -265,7 +266,7 @@ export class RebelRouter extends HTMLElement {
      * @returns {boolean}
      */
     static isRegisteredElement(name) {
-        return document.createElement(name).constructor !== HTMLElement;
+        return (window.customElements.get(name) !== undefined);
     }
 
     /**
@@ -277,7 +278,7 @@ export class RebelRouter extends HTMLElement {
         const name = RebelRouter.classToTag(Class);
         if (RebelRouter.isRegisteredElement(name) === false) {
             Class.prototype.name = name;
-            document.registerElement(name, Class);
+            window.customElements.define(name, Class);
         }
         return name;
     }
@@ -356,7 +357,7 @@ export class RebelRouter extends HTMLElement {
     }
 }
 
-document.registerElement("rebel-router", RebelRouter);
+window.customElements.define("rebel-router", RebelRouter);
 
 /**
  * Class which represents the rebel-route custom element
@@ -364,7 +365,7 @@ document.registerElement("rebel-router", RebelRouter);
 export class RebelRoute extends HTMLElement {
 
 }
-document.registerElement("rebel-route", RebelRoute);
+window.customElements.define("rebel-route", RebelRoute);
 
 /**
  * Class which represents the rebel-default custom element
@@ -372,7 +373,7 @@ document.registerElement("rebel-route", RebelRoute);
 class RebelDefault extends HTMLElement {
 
 }
-document.registerElement("rebel-default", RebelDefault);
+window.customElements.define("rebel-default", RebelDefault);
 
 
 /**
@@ -393,7 +394,7 @@ class RebelBackA extends HTMLAnchorElement {
 /**
  * Register the back button custom element
  */
-document.registerElement("rebel-back-a", {
+window.customElements.define("rebel-back-a", {
     extends: "a",
     prototype: RebelBackA.prototype
 });
