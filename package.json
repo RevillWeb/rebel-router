@@ -1,6 +1,6 @@
 {
   "name": "rebel-router",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A lightweight JavaScript router written for ultra-modern applications where web components are first class citizens",
   "license": "MIT",
   "repository": "https://github.com/RevillWeb/rebel-router.git",
