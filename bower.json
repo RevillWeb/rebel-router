@@ -1,0 +1,24 @@
+{
+  "name": "rebel-router",
+  "description": "A lightweight JavaScript router written for ultra-modern applications where web components are first class citizens",
+  "main": "src/rebel-router.js",
+  "authors": [
+    "Leon Revill"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "web",
+    "components",
+    "JavaScript",
+    "router",
+    "es2015"
+  ],
+  "homepage": "https://github.com/RevillWeb/rebel-router",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
