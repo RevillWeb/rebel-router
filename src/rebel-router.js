@@ -8,204 +8,136 @@
 /**
  * The main router class and entry point to the router.
  */
-export class RebelRouter extends HTMLElement {
+class RebelRouter extends HTMLElement {
 
     /**
      * Main initialisation point of rebel-router
-     * @param prefix - If extending rebel-router you can specify a prefix when calling createdCallback in case your elements need to be named differently
      */
-    createdCallback(prefix) {
+    constructor(self) {
+        self = super(self);
+        self._previousRoute = null;
+        self._basePath = null;
+        self._routes = {};
+        self._options = {};
+        self._initialised = false;
+        //Used to determine if we are half way through a render / transition
+        self._renderLock = false;
+        const addRoute = (event) => {
+            //Prevent the route event from bubbling up any further
+            event.stopImmediatePropagation();
+            const route = event.detail;
+            self._routes[route.path] = route.$element;
+            let render = true;
+            for (let i = 0; i < self.children.length; i++) {
+                var $child = self.children[i];
+                if ($child.initialised === false) {
+                    render = false;
+                }
+            }
+            if (render === true) {
+                self._render();
+            }
+        };
+        self.addEventListener("rebel-add-route", addRoute);
+        return self;
+    }
 
-        const _prefix = prefix || "rebel";
-        
-        this.previousPath = null;
-        this.basePath = null;
+    _getBasePath() {
+        let $element = this;
+        while ($element.parentNode) {
+            $element = $element.parentNode;
+            if ($element.nodeName.toLowerCase() == "rebel-router") {
+                const $current = $element._current();
+                return $current.path;
+            }
+        }
+        return null;
+    }
 
+    get routes() {
+        return this._routes;
+    }
+
+    get options() {
+        return this._options;
+    }
+
+    connectedCallback() {
+        this._basePath = this._getBasePath();
         //Get options
-        this.options = {
+        this._options = {
             "animation": (this.getAttribute("animation") == "true"),
             "shadowRoot": (this.getAttribute("shadow") == "true"),
             "inherit": (this.getAttribute("inherit") != "false")
         };
-
-        //Get routes
-        if (this.options.inherit === true) {
-            //If this is a nested router then we need to go and get the parent path
-            let $element = this;
-            while ($element.parentNode) {
-                $element = $element.parentNode;
-                if ($element.nodeName.toLowerCase() == _prefix + "-router") {
-                    const current = $element.current();
-                    this.basePath = current.route;
-                    break;
-                }
-            }
-        }
-        this.routes = {};
-        const $children = this.children;
-        for (let i = 0; i < $children.length; i++) {
-            const $child = $children[i];
-            let path = $child.getAttribute("path");
-            switch ($child.nodeName.toLowerCase()) {
-                case _prefix + "-default":
-                    path = "*";
-                    break;
-                case _prefix + "-route":
-                    path = (this.basePath !== null) ? this.basePath + path : path;
-                    break;
-            }
-            if (path !== null) {
-                let $template = null;
-                if ($child.innerHTML) {
-                    $template = "<" + _prefix + "-route>" + $child.innerHTML + "</" + _prefix + "-route>";
-                }
-                this.routes[path] = {
-                    "component": $child.getAttribute("component"),
-                    "template": $template
-                };
-            }
-        }
-
-        //After we have collected all configuration clear innerHTML
-        this.innerHTML = "";
-
-        if (this.options.shadowRoot === true) {
-            this.createShadowRoot();
-            this.root = this.shadowRoot;
-        } else {
-            this.root = this;
-        }
-        if (this.options.animation === true) {
-            this.initAnimation();
-        }
-        this.render();
         RebelRouter.pathChange((isBack) => {
             if (this.options.animation === true) {
-                if (isBack === true) {
-                    this.classList.add("rbl-back");
-                } else {
-                    this.classList.remove("rbl-back");
-                }
+            if (isBack === true) {
+                this.classList.add("rbl-back");
+            } else {
+                this.classList.remove("rbl-back");
             }
-            this.render();
-        });
-
-    }
-
-    /**
-     * Function used to initialise the animation mechanics if animation is turned on
-     */
-    initAnimation() {
-        const observer = new MutationObserver((mutations) => {
-            let node = mutations[0].addedNodes[0];
-            if (node !== undefined) {
-                const otherChildren = this.getOtherChildren(node);
-                node.classList.add("rebel-animate");
-                node.classList.add("enter");
-                setTimeout(() => {
-                    if (otherChildren.length > 0) {
-                        otherChildren.forEach((child) => {
-                            child.classList.add("exit");
-                            setTimeout(() => {
-                                child.classList.add("complete");
-                            }, 10);
-                        });
-                    }
-                    setTimeout(() => {
-                        node.classList.add("complete");
-                    }, 10);
-                }, 10);
-                const animationEnd = (event) => {
-                    if (event.target.className.indexOf("exit") > -1) {
-                        this.root.removeChild(event.target);
-                    }
-                };
-                node.addEventListener("transitionend", animationEnd);
-                node.addEventListener("animationend", animationEnd);
-            }
-        });
-        observer.observe(this, {childList: true});
+        }
+        this._render();
+    });
     }
 
     /**
      * Method used to get the current route object
      * @returns {*}
      */
-    current() {
-        const path = RebelRouter.getPathFromUrl();
-        for (const route in this.routes) {
-            if (route !== "*") {
-                let regexString = "^" + route.replace(/{\w+}\/?/g, "(\\w+)\/?");
-                regexString += (regexString.indexOf("\\/?") > -1) ? "" : "\\/?" + "([?=&-\/\\w+]+)?$";
-                const regex = new RegExp(regexString);
-                if (regex.test(path)) {
-                    return _routeResult(this.routes[route], route, regex, path);
+    _current() {
+        let path = RebelRouter.getPathFromUrl();
+        if (this._basePath !== null) {
+            path = path.replace(this._basePath, "");
+        }
+        for (const routeString in this._routes) {
+            if (routeString !== "*") {
+                const $route = this._routes[routeString];
+                if ($route.regex.test(path)) {
+                    return $route;
                 }
             }
         }
-        return (this.routes["*"] !== undefined) ? _routeResult(this.routes["*"], "*", null, path) : null;
+        return (this._routes["*"] !== undefined) ? this._routes["*"] : null;
     }
 
     /**
      * Method called to render the current view
      */
-    render() {
-        const result = this.current();
-        if (result !== null) {
-            if (result.path !== this.previousPath || this.options.animation === true) {
-                if (this.options.animation !== true) {
-                    this.root.innerHTML = "";
+    _render() {
+        if (this._renderLock === true) return;
+        const $current = this._current();
+        if ($current !== null) {
+            this._renderLock = true;
+            if ($current !== this._previousRoute) {
+                if (this.getAttribute("id") === "sub") {
+                    console.log("PR:", this._previousRoute);
                 }
-                if (result.component !== null) {
-                    let $component = document.createElement(result.component);
-                    for (let key in result.params) {
-                        let value = result.params[key];
-                        if (typeof value == "Object") {
-                            try {
-                                value = JSON.parse(value);
-                            } catch (e) {
-                                console.error("Couldn't parse param value:", e);
-                            }
-                        }
-                        $component.setAttribute(key, value);
-                    }
-                    this.root.appendChild($component);
-                } else {
-                    let $template = result.template;
-                    //TODO: Find a faster alternative
-                    if ($template.indexOf("${") > -1) {
-                        $template = $template.replace(/\${([^{}]*)}/g,
-                            function (a, b) {
-                                var r = result.params[b];
-                                return typeof r === 'string' || typeof r === 'number' ? r : a;
-                            }
-                        );
-                    }
-                    this.root.innerHTML = $template;
+                $current.load().then(() => {
+                    let promises = [];
+                if (this._previousRoute !== null) {
+                    promises.push($current.in(this._options.animation));
                 }
-                this.previousPath = result.path;
+                if (this._previousRoute !== null) {
+                    promises.push(this._previousRoute.out(this._options.animation));
+                }
+                Promise.all(promises).then(() => {
+                    this._renderLock = false;
+                this._previousRoute = $current;
+            }).catch((error) => {
+                    this._renderLock = false;
+                throw new Error(error);
+            });
+            });
+            } else {
+                console.log("LOAD");
+                $current.load().then(() => {
+                    this._renderLock = false;
+            });
             }
         }
     }
-
-
-    /**
-     *
-     * @param node - Used with the animation mechanics to get all other view children except itself
-     * @returns {Array}
-     */
-    getOtherChildren(node) {
-        const children = this.root.children;
-        let results = [];
-        for (let i = 0; i < children.length; i++) {
-            let child = children[i];
-            if (child != node) {
-                results.push(child);
-            }
-        }
-        return results;
-    };
-
 
     /**
      * Static helper method to parse the query string from a url into an object.
@@ -237,58 +169,6 @@ export class RebelRouter extends HTMLElement {
             }
         }
         return result;
-    }
-
-    /**
-     * Static helper method to convert a class name to a valid element name.
-     * @param Class
-     * @returns {string}
-     */
-    static classToTag(Class) {
-        /**
-         * Class.name would be better but this isn't supported in IE 11.
-         */
-        try {
-            var name = Class.toString().match(/^function\s*([^\s(]+)/)[1].replace(/\W+/g, '-').replace(/([a-z\d])([A-Z0-9])/g, '$1-$2').toLowerCase();
-        } catch (e) {
-            throw new Error("Couldn't parse class name:", e);
-        }
-        if (RebelRouter.validElementTag(name) === false) {
-            throw new Error("Class name couldn't be translated to tag.");
-        }
-        return name;
-    }
-
-    /**
-     * Static helper method used to determine if an element with the specified name has already been registered.
-     * @param name
-     * @returns {boolean}
-     */
-    static isRegisteredElement(name) {
-        return document.createElement(name).constructor !== HTMLElement;
-    }
-
-    /**
-     * Static helper method to take a web component class, create an element name and register the new element on the document.
-     * @param Class
-     * @returns {string}
-     */
-    static createElement(Class) {
-        const name = RebelRouter.classToTag(Class);
-        if (RebelRouter.isRegisteredElement(name) === false) {
-            Class.prototype.name = name;
-            document.registerElement(name, Class);
-        }
-        return name;
-    }
-
-    /**
-     * Simple static helper method containing a regular expression to validate an element name
-     * @param tag
-     * @returns {boolean}
-     */
-    static validElementTag(tag) {
-        return /^[a-z0-9\-]+$/.test(tag);
     }
 
     /**
@@ -327,10 +207,11 @@ export class RebelRouter extends HTMLElement {
      * @param path
      * @returns {{}}
      */
-    static getParamsFromUrl(regex, route, path) {
-        var result = RebelRouter.parseQueryString(path);
-        var re = /{(\w+)}/g;
-        var results = [];
+    static getParamsFromUrl(regex, route) {
+        const path = RebelRouter.getPathFromUrl();
+        let result = RebelRouter.parseQueryString(path);
+        const re = /{(\w+)}/g;
+        let results = [];
         let match;
         while (match = re.exec(route)) {
             results.push(match[1]);
@@ -354,32 +235,215 @@ export class RebelRouter extends HTMLElement {
             return result[1];
         }
     }
+
+    static importTemplate(url) {
+        return new Promise((resolve, reject) => {
+                if ('import' in document.createElement('link')) {
+            //Browser supports HTML Imports so let's use'em!
+            var $link = document.createElement("link");
+            $link.setAttribute("rel", "import");
+            $link.setAttribute("href", url);
+            $link.setAttribute("async", "true");
+            $link.addEventListener("load", () => {
+                const $template = $link.import.querySelector("template");
+            if ($template !== null) {
+                const $div = document.createElement("div");
+                $div.appendChild($template.content.cloneNode(true));
+                resolve($div.innerHTML);
+            } else {
+                reject("No template element found in '" + url + "'.");
+            }
+        });
+            $link.addEventListener("error", () => {
+                reject("An error occurred while trying to load '" + url + "'.");
+        });
+            document.head.appendChild($link);
+        } else {
+            // Going to have to do it the good'ol fashioned way.
+            var xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                resolve(xhr.responseText)
+            };
+            xhr.open("GET", url);
+            xhr.send();
+        }
+    });
+    }
+
+    static interpolateString(string, data) {
+        if (string.indexOf("${") > -1) {
+            string = string.replace(/\${([^{}]*)}/g,
+                function (a, b) {
+                    var r = data[b];
+                    return typeof r === 'string' || typeof r === 'number' ? r : a;
+                }
+            );
+        }
+        return string.replace(/\${(.*)}/, "");
+    }
+
 }
 
-document.registerElement("rebel-router", RebelRouter);
+window.customElements.define("rebel-router", RebelRouter);
 
 /**
  * Class which represents the rebel-route custom element
  */
-export class RebelRoute extends HTMLElement {
-
+class RebelRoute extends HTMLElement {
+    constructor() {
+        super();
+        this._initialised = false;
+        this._loaded = false;
+        this._path = null;
+        this._regex = null;
+    }
+    get initialised() {
+        return this._initialised;
+    }
+    get path() {
+        return this._path;
+    }
+    get regex() {
+        return this._regex;
+    }
+    load() {
+        return new Promise((resolve) => {
+            this.style.display = "inherit";
+        if (this._loaded === false) {
+            this.innerHTML = this.$template;
+            this._loaded = true;
+        }
+        resolve();
+    });
+    }
+    _setTransitionFallback(reject) {
+        return setTimeout(() => {
+                //If this happens then the transition never completed
+                reject("Transition for route '" + this.path + "' never ended.");
+    }, 5000);
+    }
+    in(animate) {
+        return new Promise((resolve, reject) => {
+                if (animate === true) {
+            var fb = this._setTransitionFallback(reject);
+            const onTransitionEnd = () => {
+                clearTimeout(fb);
+                this.removeEventListener('transitionend', onTransitionEnd);
+                this.classList.remove('enter');
+                this.classList.remove('complete');
+                this.style.display = "inherit";
+                resolve();
+            };
+            this.classList.add('rebel-animate');
+            this.classList.add('enter');
+            setTimeout(() => {
+                this.classList.add('complete');
+        }, 100);
+            this.addEventListener('transitionend', onTransitionEnd);
+        } else {
+            this.style.display = "inherit";
+            resolve();
+        }
+    });
+    }
+    out(animate) {
+        return new Promise((resolve, reject) => {
+                if (animate === true) {
+            var fb = this._setTransitionFallback(reject);
+            const onTransitionEnd = () => {
+                clearTimeout(fb);
+                this.removeEventListener('transitionend', onTransitionEnd);
+                this.classList.remove('exit');
+                this.classList.remove('complete');
+                this.style.display = "none";
+                resolve();
+            };
+            this.classList.add('rebel-animate');
+            this.classList.add('exit');
+            setTimeout(() => {
+                this.classList.add('complete');
+        }, 100);
+            this.addEventListener('transitionend', onTransitionEnd);
+        } else {
+            this.style.display = "none";
+            resolve();
+        }
+    });
+    }
+    _initialise() {
+        return new Promise((resolve, reject) => {
+                const _tplResource = this.getAttribute("template");
+        const _tplInline = this.querySelector("template");
+        if (_tplResource !== null) {
+            RebelRouter.importTemplate(_tplResource).then((tplString) => {
+                this.$template = tplString;
+            resolve();
+        }).catch((error) => {
+                reject(error);
+        });
+        } else if (_tplInline !== null) {
+            const $div = document.createElement("div");
+            $div.appendChild(_tplInline.content.cloneNode(true));
+            this.$template = $div.innerHTML;
+            resolve();
+        } else {
+            this.$template = this.innerHTML;
+            resolve();
+        }
+    });
+    }
+    connectedCallback(defaults) {
+        if (this._initialised === false) {
+            this._initialise().then(() => {
+                this.innerHTML = "";
+            this._initialised = true;
+            const path = this.getAttribute("path");
+            let regex = null;
+            if (path !== null) {
+                let regexString = "^" + path.replace(/{\w+}\/?/g, "(\\w+)\/?");
+                regexString += (regexString.indexOf("\\/?") > -1) ? "" : "\\/?" + "([?=&-\/\\w+]+)?$";
+                regex = new RegExp(regexString);
+            }
+            const detail = Object.assign({
+                "path": path,
+                "regex": regex,
+                "$element": this
+            }, defaults);
+            if (detail.path === null) {
+                throw Error("rebel-route requires a path attribute to be specified.")
+            }
+            this._path = detail.path;
+            this._regex = detail.regex;
+            this.dispatchEvent(new CustomEvent("rebel-add-route", {
+                "detail": detail,
+                "bubbles": true
+            }));
+        }).catch((error) => {
+                console.error(error);
+        });
+        }
+    }
+    static parseRouteParams(string) {
+        return RebelRouter.interpolateString(string, RebelRouter.getParamsFromUrl(this._regex, this._path));
+    }
 }
-document.registerElement("rebel-route", RebelRoute);
+window.customElements.define("rebel-route", RebelRoute);
 
 /**
  * Class which represents the rebel-default custom element
  */
-class RebelDefault extends HTMLElement {
-
+class RebelDefault extends RebelRoute {
+    connectedCallback() {
+        super.connectedCallback({"path": "*"});
+    }
 }
-document.registerElement("rebel-default", RebelDefault);
-
+window.customElements.define("rebel-default", RebelDefault);
 
 /**
  * Represents the prototype for an anchor element which added functionality to perform a back transition.
  */
 class RebelBackA extends HTMLAnchorElement {
-    attachedCallback() {
+    connectedCallback() {
         this.addEventListener("click", (event) => {
             const path = this.getAttribute("href");
             event.preventDefault();
@@ -393,29 +457,6 @@ class RebelBackA extends HTMLAnchorElement {
 /**
  * Register the back button custom element
  */
-document.registerElement("rebel-back-a", {
-    extends: "a",
-    prototype: RebelBackA.prototype
+window.customElements.define("rebel-back-a", RebelBackA, {
+    extends: "a"
 });
-
-/**
- * Constructs a route object
- * @param obj - the component name or the HTML template
- * @param route
- * @param regex
- * @param path
- * @returns {{}}
- * @private
- */
-function _routeResult(obj, route, regex, path) {
-    let result = {};
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            result[key] = obj[key];
-        }
-    }
-    result.route = route;
-    result.path = path;
-    result.params = RebelRouter.getParamsFromUrl(regex, route, path);
-    return result;
-}
