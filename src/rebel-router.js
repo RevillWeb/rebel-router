@@ -72,14 +72,14 @@ class RebelRouter extends HTMLElement {
         };
         RebelRouter.pathChange((isBack) => {
             if (this.options.animation === true) {
-            if (isBack === true) {
-                this.classList.add("rbl-back");
-            } else {
-                this.classList.remove("rbl-back");
+                if (isBack === true) {
+                    this.classList.add("rbl-back");
+                } else {
+                    this.classList.remove("rbl-back");
+                }
             }
-        }
-        this._render();
-    });
+            this._render();
+        });
     }
 
     /**
@@ -111,30 +111,26 @@ class RebelRouter extends HTMLElement {
         if ($current !== null) {
             this._renderLock = true;
             if ($current !== this._previousRoute) {
-                if (this.getAttribute("id") === "sub") {
-                    console.log("PR:", this._previousRoute);
-                }
                 $current.load().then(() => {
                     let promises = [];
-                if (this._previousRoute !== null) {
-                    promises.push($current.in(this._options.animation));
-                }
-                if (this._previousRoute !== null) {
-                    promises.push(this._previousRoute.out(this._options.animation));
-                }
-                Promise.all(promises).then(() => {
-                    this._renderLock = false;
-                this._previousRoute = $current;
-            }).catch((error) => {
-                    this._renderLock = false;
-                throw new Error(error);
-            });
-            });
+                    if (this._previousRoute !== null) {
+                        promises.push($current.in(this._options.animation));
+                    }
+                    if (this._previousRoute !== null) {
+                        promises.push(this._previousRoute.out(this._options.animation));
+                    }
+                    Promise.all(promises).then(() => {
+                        this._renderLock = false;
+                        this._previousRoute = $current;
+                    }).catch((error) => {
+                        this._renderLock = false;
+                        throw new Error(error);
+                    });
+                });
             } else {
-                console.log("LOAD");
                 $current.load().then(() => {
                     this._renderLock = false;
-            });
+                });
             }
         }
     }
@@ -238,36 +234,28 @@ class RebelRouter extends HTMLElement {
 
     static importTemplate(url) {
         return new Promise((resolve, reject) => {
-                if ('import' in document.createElement('link')) {
-            //Browser supports HTML Imports so let's use'em!
-            var $link = document.createElement("link");
-            $link.setAttribute("rel", "import");
-            $link.setAttribute("href", url);
-            $link.setAttribute("async", "true");
-            $link.addEventListener("load", () => {
-                const $template = $link.import.querySelector("template");
-            if ($template !== null) {
-                const $div = document.createElement("div");
-                $div.appendChild($template.content.cloneNode(true));
-                resolve($div.innerHTML);
+            if ('import' in document.createElement('link')) {
+                //Browser supports HTML Imports so let's use'em!
+                var $link = document.createElement("link");
+                $link.setAttribute("rel", "import");
+                $link.setAttribute("href", url);
+                $link.setAttribute("async", "true");
+                $link.addEventListener("load", () => {
+                    const $template = $link.import.querySelector("template");
+                    if ($template !== null) {
+                        resolve($template);
+                    } else {
+                        reject("No template element found in '" + url + "'.");
+                    }
+                });
+                $link.addEventListener("error", () => {
+                    reject("An error occurred while trying to load '" + url + "'.");
+                });
+                document.head.appendChild($link);
             } else {
-                reject("No template element found in '" + url + "'.");
+                reject("Sorry, your browser doesn't support HTML Imports.")
             }
         });
-            $link.addEventListener("error", () => {
-                reject("An error occurred while trying to load '" + url + "'.");
-        });
-            document.head.appendChild($link);
-        } else {
-            // Going to have to do it the good'ol fashioned way.
-            var xhr = new XMLHttpRequest();
-            xhr.onload = () => {
-                resolve(xhr.responseText)
-            };
-            xhr.open("GET", url);
-            xhr.send();
-        }
-    });
     }
 
     static interpolateString(string, data) {
@@ -309,118 +297,118 @@ class RebelRoute extends HTMLElement {
     load() {
         return new Promise((resolve) => {
             this.style.display = "inherit";
-        if (this._loaded === false) {
-            this.innerHTML = this.$template;
-            this._loaded = true;
-        }
-        resolve();
-    });
+            if (this._loaded === false) {
+                this.appendChild(this.$template);
+                this._loaded = true;
+            }
+            resolve();
+        });
     }
     _setTransitionFallback(reject) {
         return setTimeout(() => {
-                //If this happens then the transition never completed
-                reject("Transition for route '" + this.path + "' never ended.");
-    }, 5000);
+            //If this happens then the transition never completed
+            reject("Transition for route '" + this.path + "' never ended.");
+        }, 5000);
     }
     in(animate) {
         return new Promise((resolve, reject) => {
-                if (animate === true) {
-            var fb = this._setTransitionFallback(reject);
-            const onTransitionEnd = () => {
-                clearTimeout(fb);
-                this.removeEventListener('transitionend', onTransitionEnd);
-                this.classList.remove('enter');
-                this.classList.remove('complete');
+            if (animate === true) {
+                var fb = this._setTransitionFallback(reject);
+                const onTransitionEnd = () => {
+                    clearTimeout(fb);
+                    this.removeEventListener('transitionend', onTransitionEnd);
+                    this.classList.remove('enter');
+                    this.classList.remove('complete');
+                    this.style.display = "inherit";
+                    resolve();
+                };
+                this.classList.add('rebel-animate');
+                this.classList.add('enter');
+                setTimeout(() => {
+                    this.classList.add('complete');
+                }, 100);
+                this.addEventListener('transitionend', onTransitionEnd);
+            } else {
                 this.style.display = "inherit";
                 resolve();
-            };
-            this.classList.add('rebel-animate');
-            this.classList.add('enter');
-            setTimeout(() => {
-                this.classList.add('complete');
-        }, 100);
-            this.addEventListener('transitionend', onTransitionEnd);
-        } else {
-            this.style.display = "inherit";
-            resolve();
-        }
-    });
+            }
+        });
     }
     out(animate) {
         return new Promise((resolve, reject) => {
-                if (animate === true) {
-            var fb = this._setTransitionFallback(reject);
-            const onTransitionEnd = () => {
-                clearTimeout(fb);
-                this.removeEventListener('transitionend', onTransitionEnd);
-                this.classList.remove('exit');
-                this.classList.remove('complete');
+            if (animate === true) {
+                var fb = this._setTransitionFallback(reject);
+                const onTransitionEnd = () => {
+                    clearTimeout(fb);
+                    this.removeEventListener('transitionend', onTransitionEnd);
+                    this.classList.remove('exit');
+                    this.classList.remove('complete');
+                    this.style.display = "none";
+                    resolve();
+                };
+                this.classList.add('rebel-animate');
+                this.classList.add('exit');
+                setTimeout(() => {
+                    this.classList.add('complete');
+                }, 100);
+                this.addEventListener('transitionend', onTransitionEnd);
+            } else {
                 this.style.display = "none";
                 resolve();
-            };
-            this.classList.add('rebel-animate');
-            this.classList.add('exit');
-            setTimeout(() => {
-                this.classList.add('complete');
-        }, 100);
-            this.addEventListener('transitionend', onTransitionEnd);
-        } else {
-            this.style.display = "none";
-            resolve();
-        }
-    });
+            }
+        });
     }
     _initialise() {
         return new Promise((resolve, reject) => {
-                const _tplResource = this.getAttribute("template");
-        const _tplInline = this.querySelector("template");
-        if (_tplResource !== null) {
-            RebelRouter.importTemplate(_tplResource).then((tplString) => {
-                this.$template = tplString;
-            resolve();
-        }).catch((error) => {
-                reject(error);
+            const _tplResource = this.getAttribute("template");
+            const _tplInline = this.querySelector("template");
+            if (_tplResource !== null) {
+                RebelRouter.importTemplate(_tplResource).then((_tpl) => {
+                    this.$template = document.importNode(_tpl.content, true);
+                    resolve();
+                }).catch((error) => {
+                    reject(error);
+                });
+            } else if (_tplInline !== null) {
+                this.$template = document.importNode(_tplInline.content, true);
+                resolve();
+            } else {
+                let $template = document.createElement("template");
+                $template.innerHTML = this.innerHTML;
+                this.$template = document.importNode($template.content, true);
+                resolve();
+            }
         });
-        } else if (_tplInline !== null) {
-            const $div = document.createElement("div");
-            $div.appendChild(_tplInline.content.cloneNode(true));
-            this.$template = $div.innerHTML;
-            resolve();
-        } else {
-            this.$template = this.innerHTML;
-            resolve();
-        }
-    });
     }
     connectedCallback(defaults) {
         if (this._initialised === false) {
             this._initialise().then(() => {
                 this.innerHTML = "";
-            this._initialised = true;
-            const path = this.getAttribute("path");
-            let regex = null;
-            if (path !== null) {
-                let regexString = "^" + path.replace(/{\w+}\/?/g, "(\\w+)\/?");
-                regexString += (regexString.indexOf("\\/?") > -1) ? "" : "\\/?" + "([?=&-\/\\w+]+)?$";
-                regex = new RegExp(regexString);
-            }
-            const detail = Object.assign({
-                "path": path,
-                "regex": regex,
-                "$element": this
-            }, defaults);
-            if (detail.path === null) {
-                throw Error("rebel-route requires a path attribute to be specified.")
-            }
-            this._path = detail.path;
-            this._regex = detail.regex;
-            this.dispatchEvent(new CustomEvent("rebel-add-route", {
-                "detail": detail,
-                "bubbles": true
-            }));
-        }).catch((error) => {
+                this._initialised = true;
+                const path = this.getAttribute("path");
+                let regex = null;
+                if (path !== null) {
+                    let regexString = "^" + path.replace(/{\w+}\/?/g, "(\\w+)\/?");
+                    regexString += (regexString.indexOf("\\/?") > -1) ? "" : "\\/?" + "([?=&-\/\\w+]+)?$";
+                    regex = new RegExp(regexString);
+                }
+                const detail = Object.assign({
+                    "path": path,
+                    "regex": regex,
+                    "$element": this
+                }, defaults);
+                if (detail.path === null) {
+                    throw Error("rebel-route requires a path attribute to be specified.")
+                }
+                this._path = detail.path;
+                this._regex = detail.regex;
+                this.dispatchEvent(new CustomEvent("rebel-add-route", {
+                    "detail": detail,
+                    "bubbles": true
+                }));
+            }).catch((error) => {
                 console.error(error);
-        });
+            });
         }
     }
     static parseRouteParams(string) {
