@@ -1,4 +1,4 @@
-#Minimalistic JavaScript router for Web Components
+# Minimalistic JavaScript router for Web Components
 
 <div align="center"><img src="http://i.imgur.com/8CPaGEG.png"></div>
 
@@ -7,9 +7,9 @@ Inspired by React Router, works in plain HTML.
 - [Demo](http://revillweb.github.io/rebel-router-demo/)
 - [Simple example](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
 
-**Note:** Currently this is very much a work in progress. I'm working hard to add more desirable features such as History API support and getting the router field testing in real world applications.
+**Note: Currently this is very much a work in progress with no active development right now.**
 
-#Getting started
+# Getting started
 
 Rebel-router is designed to be used when building applications using the latest version of JavaScript and will need transpiling down to ES5 using [babel](https://babeljs.io/) or similar.
 
@@ -72,7 +72,7 @@ import {AboutPage} from './about.js';
 
 A simple tutorial on how to get started with **rebel-router** can be found [here](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started).
 
-##Features
+## Features
 
 * Light-weight
 * Zero dependencies*
@@ -82,7 +82,7 @@ A simple tutorial on how to get started with **rebel-router** can be found [here
 
 *Does currently require [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) for older browser support.
 
-##Examples
+## Examples
 
 * [Getting started tutorial](https://github.com/RevillWeb/rebel-router-examples/tree/master/getting-started)
 * [Accessing route parameters](https://github.com/RevillWeb/rebel-router-examples/tree/master/route-params)
@@ -90,33 +90,32 @@ A simple tutorial on how to get started with **rebel-router** can be found [here
 * Using animations
 * [Complete demo](http://revillweb.github.io/rebel-router-demo/)
 
-#What?
+# What?
 
 Rebel router is a lightweight JavaScript router written for ultra-modern web applications where web components are first class citizens. Rebel-router is designed to make building modern applications using ES2015 and beyond easier while not tying you into a specific framework or technology stack. Rebel-router allows you to write web components to represent your views so you can make full use of the view controller pattern based on nothing more than browser standards.
 
-#Why?
+# Why?
 
 The latest features of JavaScript (ES2015-17) provide solutions to problems web developers have been struggling with for years. This includes native support for modules, true encapsulation with web components and a reliance on monolithic frameworks to really build anything scalable. Rebel-router allows the developer to write web components which represent views and provides an easy way to tie these views to a URL path with easy access to any parameters. This provides some flexible structure in writing vanilla JavaScript applications without frameworks.
 
-##Platform Support
+## Platform Support
 
 While some browsers do not support the full specification for web components you will need to include the [webcomponents.js](https://github.com/webcomponents/webcomponentsjs) pollyfill.
-
 
 | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/chrome/chrome_64x64.png" width="48px" height="48px" alt="Chrome logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/edge/edge_64x64.png" width="48px" height="48px" alt="Edge logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/firefox/firefox_64x64.png" width="48px" height="48px" alt="Firefox logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/internet-explorer/internet-explorer_64x64.png" width="48px" height="48px" alt="Internet Explorer logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/opera/opera_64x64.png" width="48px" height="48px" alt="Opera logo"> | <img src="https://raw.githubusercontent.com/alrra/browser-logos/master/safari/safari_64x64.png" width="48px" height="48px" alt="Safari logo"> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Latest* ✔ | Latest ✔ | Latest ✔ | IE 11 ✔ | Latest ✔ | Latest* ✔ |
 *Includes both Mobile & Desktop versions.
 
-#Usage
+# Usage
 
 This section of the document details the API for rebel-router.
 
-##`<rebel-router></rebel-router>`
+## `<rebel-router></rebel-router>`
 
 This element is used to insert a pre-configured router instance into the DOM.
 
-###Attributes
+### Attributes
 
 | Attribute Name | Required | Type    | Example     | Default | Comments                                                                |
 | -------------- | -------- | ------- | ----------- | ------- | ----------------------------------------------------------------------- |
@@ -124,36 +123,36 @@ This element is used to insert a pre-configured router instance into the DOM.
 | shadow         |   No     | Boolean | false       | false   | Whether or not the router should be encapsulated within the shadow DOM. |
 | inherit        |   No     | Boolean | false       | true    | Whether or not the router should inherit a parent routes path.          |
 
-###Children
+### Children
 
 Configuration is specified via child elements of `<rebel-router>`.
 
-###`<rebel-route></rebel-route>`
+### `<rebel-route></rebel-route>`
 
-####Attributes
+#### Attributes
 
 | Attribute Name | Required | Type    | Example     | Comments                                                                            |
 | -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
 | path           |   Yes    | String  | /user/{id}  | The path to which the specified template or component should be rendered.           |
 | component      |   No     | String  | about-page  | The registered element name of the component to be rendered for the specified path. |
 
-####Children
+#### Children
 
 If you do not wish to use a component to render your view for the specified path you are able to add arbitrary HTML to be used as the template. 
 
-###`<rebel-default></rebel-default>`
+### `<rebel-default></rebel-default>`
 
-###Attributes
+### Attributes
 
 | Attribute Name | Required | Type    | Example     | Comments                                                                            |
 | -------------- | -------- | ------- | ----------- | ----------------------------------------------------------------------------------- |
 | component      |   No     | String  | home-page   | The registered element name of the component to be rendered for the specified path. |
 
-####Children
+#### Children
 
 As with the route element you are also able to add arbitrary HTML to be used as the template. 
 
-###Example
+### Example
 
 ```html
 <rebel-router animation="true" shadow="false" inherit="false">
@@ -171,23 +170,23 @@ As with the route element you are also able to add arbitrary HTML to be used as 
 </rebel-router>
 ```
 
-##`<rebel-back-a></rebel-back-a>`
+## `<rebel-back-a></rebel-back-a>`
 
 An extended HTML anchor element which is used to trigger a back animation for router instances which have animation enabled.
 
-###Attributes
+### Attributes
 
 | Attribute Name | Required | Type   | Example     | Comments                                              |
 | -------------- | -------- | ------ | ----------- | ----------------------------------------------------- |
 | href           |   Yes    | String | `#/users` | The path of the route the anchor element should navigate too. |
 
-###Example
+### Example
 
 ```html
     <a href="#/user/1" is="rebel-back-a"><span class="icon icon-arrow-left2"></span> Back</a>
 ```
 
-#To Do
+# To Do
 
 * History API Support - Where as I've not yet found any real need for this this router is aimed at ultra-modern applications now that the History API is widely supported this will be one of the next features added
 * Intercept transition - A nice feature of many routers is the ability to do work and resolve when finished before a route transition completes allowing you to set-up data from the next page
